@@ -5,6 +5,8 @@
 #include <QDateTime>
 #include <QFile>
 
+#include <QClipboard>
+
 #include <QList>
 #include <QNetworkProxy>
 
@@ -254,4 +256,19 @@ void Widget::on_btnApply_clicked()
     config->setValue("result", resultPath);
 
     config->sync();
+}
+
+void Widget::on_copyMonthly_clicked()
+{
+    QGuiApplication::clipboard()->setText(ui->txtMonthly->toPlainText());
+}
+
+void Widget::on_copyNotMonthly_clicked()
+{
+    QGuiApplication::clipboard()->setText(ui->txtNotMonthly->toPlainText());
+}
+
+void Widget::on_copyFailure_clicked()
+{
+    QGuiApplication::clipboard()->setText(ui->txtFailure->toPlainText());
 }

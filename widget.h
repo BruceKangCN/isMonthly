@@ -47,6 +47,12 @@ private slots:
 
     void on_btnApply_clicked();
 
+    void on_copyMonthly_clicked();
+
+    void on_copyNotMonthly_clicked();
+
+    void on_copyFailure_clicked();
+
 private:
     Ui::Widget *ui;
 
