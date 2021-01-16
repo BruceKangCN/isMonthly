@@ -22,6 +22,29 @@ Widget::Widget(QWidget *parent)
     qDebug() << QSslSocket::sslLibraryVersionString();
     qDebug() << QSslSocket::supportsSsl();
 
+    baseUrl = "https://v2.mahuateng.cf/isMonthly/";
+    logPath = "isMonthly.log";
+    resultPath = "result/";
+    config = new QSettings("app.ini", QSettings::IniFormat);
+    if (config->contains("url")) {
+        baseUrl = config->value("url").toString();
+        ui->inpUrl->setText(baseUrl);
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find url: " << baseUrl;
+    }
+    if (config->contains("log")) {
+        logPath = config->value("log").toString();
+        ui->inpLog->setText(logPath);
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find log: " << logPath;
+    }
+    if (config->contains("result")) {
+        resultPath = config->value("result").toString();
+        ui->inpResult->setText(resultPath);
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find result: " << resultPath;
+    }
+
     monthly = QStringList();
     notmonthly = QStringList();
     failure = QStringList();
@@ -36,6 +59,7 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     delete nam;
+    delete config;
 
     generateFile("monthly");
 
@@ -52,7 +76,7 @@ void Widget::on_pushButton_clicked()
         while (reply != nullptr && reply->isRunning()) {
             QApplication::processEvents();
         }
-        url = "https://v2.mahuateng.cf/isMonthly/" + urls[i++].simplified();
+        QString url = baseUrl + urls[i++].simplified();
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "url: " << url;
         request.setUrl(url);
@@ -65,7 +89,7 @@ void Widget::on_pushButton_clicked()
 
 void Widget::getInfo()
 {
-    QFile log("isMonthly.log");
+    QFile log(logPath);
     log.open(QIODevice::WriteOnly | QIODevice::Append);
     log.write(QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]%1\n").arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()).toUtf8());
     log.write(QString("ssl version: %1\n").arg(QSslSocket::sslLibraryVersionString()).toUtf8());
@@ -92,14 +116,16 @@ void Widget::getInfo()
     if (success) {
         if (isMonthly) {
             monthly.append(cid);
-            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget, QStringList(QString("[%1]月额视频：是，%2k").arg(cid).arg(bitrate)));
+            ui->txtMonthly->setText(monthly.join(','));
+            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：是", QString("%1k").arg(bitrate)}));
             list.append(item);
             item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"bitrate\": %1").arg(bitrate))));
             item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"monthly\": %1").arg(isMonthly?"true":"false"))));
             item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"success\": %1").arg(success?"true":"false"))));
         } else {
             notmonthly.append(cid);
-            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget, QStringList(QString("[%1]月额视频：否,%2k").arg(cid).arg(bitrate)));
+            ui->txtNotMonthly->setText(notmonthly.join(','));
+            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：否", QString("%1k").arg(bitrate)}));
             list.append(item);
             item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"bitrate\": %1").arg(bitrate))));
             item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"monthly\": %1").arg(isMonthly?"true":"false"))));
@@ -107,7 +133,8 @@ void Widget::getInfo()
         }
     } else {
         failure.append(cid);
-        new QTreeWidgetItem(ui->treeWidget, QStringList(QString("[%1]查询失败").arg(cid)));
+        ui->txtFailure->setText(failure.join(','));
+        new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "查询失败"}));
     }
 
     log.close();
@@ -136,9 +163,28 @@ void Widget::keyPressEvent(QKeyEvent* ev)
             for (QTreeWidgetItem* item : items) {
                 p = item->parent();
                 if (p == nullptr) {
+                    qDebug() << "remove no-parent item";
+
+                    QString content = item->data(0, Qt::DisplayRole).toString();
+                    QString type = item->data(1, Qt::DisplayRole).toString();
+
+                    if (type == "月额视频：是") {
+                        monthly.remove(monthly.indexOf(content));
+                        ui->txtMonthly->setText(monthly.join(','));
+                    }
+                    if (type == "月额视频：否") {
+                        notmonthly.remove(notmonthly.indexOf(content));
+                        ui->txtNotMonthly->setText(notmonthly.join(','));
+                    }
+                    if (type == "查询失败") {
+                        failure.remove(failure.indexOf(content));
+                        ui->txtFailure->setText(failure.join(','));
+                    }
+
                     list.removeOne(item);
                     delete item;
                 } else {
+                    qDebug() << "remove child item";
                     p->removeChild(item);
                     delete item;
                 }
@@ -164,7 +210,7 @@ QString Widget::getFailure()
 
 void Widget::generateFile(QString type)
 {
-    QFile f = QFile("result/" + type + ".txt");
+    QFile f = QFile(resultPath + type + ".txt");
     f.open(QIODevice::WriteOnly);
     QString content;
 
@@ -195,4 +241,17 @@ void Widget::on_btnNotMonthly_clicked()
 void Widget::on_btnFailure_clicked()
 {
     generateFile("failure");
+}
+
+void Widget::on_btnApply_clicked()
+{
+    baseUrl = ui->inpUrl->text();
+    logPath = ui->inpLog->text();
+    resultPath = ui->inpResult->text();
+
+    config->setValue("url", baseUrl);
+    config->setValue("log", logPath);
+    config->setValue("result", resultPath);
+
+    config->sync();
 }

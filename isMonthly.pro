@@ -38,4 +38,5 @@ RC_ICONS = isMonthly.ico
 DISTFILES += \
     .gitignore \
     LICENSE \
-    README.md
+    README.md \
+    app.ini

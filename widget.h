@@ -13,6 +13,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QTreeWidget>
+#include <QSettings>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -44,11 +45,17 @@ private slots:
 
     void on_btnFailure_clicked();
 
+    void on_btnApply_clicked();
+
 private:
     Ui::Widget *ui;
 
+    QSettings* config;
+
     QString id;
-    QString url;
+    QString baseUrl;
+    QString logPath;
+    QString resultPath;
     QNetworkAccessManager *nam;
     QNetworkRequest request;
     QNetworkReply *reply;
