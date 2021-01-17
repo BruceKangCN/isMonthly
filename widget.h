@@ -31,7 +31,11 @@ public:
     void generateFile(QString type);
 
 protected:
-    void getInfo();
+    void getInfo(); // get query state, is monthly state, bitrate of a video
+
+    /*
+     * concat QStrings with ','
+     */
     QString getMonthly();
     QString getNotMonthly();
     QString getFailure();
@@ -57,16 +61,29 @@ private:
     Ui::Widget *ui;
 
     QSettings* config;
-
-    QString id;
+    /*
+     * configuration
+     */
     QString baseUrl;
     QString logPath;
     QString resultPath;
+
+    /*
+     * for resolving network requests
+     */
     QNetworkAccessManager *nam;
     QNetworkRequest request;
     QNetworkReply *reply;
     QByteArray data;
+
+    /*
+     * to show infomation
+     */
     QList<QTreeWidgetItem*> list;
+
+    /*
+     * to store ids
+     */
     QStringList monthly;
     QStringList notmonthly;
     QStringList failure;

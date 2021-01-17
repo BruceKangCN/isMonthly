@@ -18,12 +18,18 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
 
+    /*
+     * check SSL infomation, only for debug use
+     */
     qDebug() << QSslSocket::sslLibraryBuildVersionNumber();
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
     qDebug() << QSslSocket::sslLibraryVersionNumber();
     qDebug() << QSslSocket::sslLibraryVersionString();
     qDebug() << QSslSocket::supportsSsl();
 
+    /*
+     * get settings from ini file
+     */
     baseUrl = "https://v2.mahuateng.cf/isMonthly/";
     logPath = "isMonthly.log";
     resultPath = "result/";
@@ -47,14 +53,18 @@ Widget::Widget(QWidget *parent)
                  << "find result: " << resultPath;
     }
 
+    /*
+     * init QStringLists
+     */
     monthly = QStringList();
     notmonthly = QStringList();
     failure = QStringList();
 
+    /*
+     * init QNetworkAccessManager
+     */
     nam = new QNetworkAccessManager(this);
-
     nam->setProxy(QNetworkProxy::DefaultProxy);
-
     connect(nam, &QNetworkAccessManager::finished, this, &Widget::getInfo);
 }
 
@@ -68,29 +78,34 @@ Widget::~Widget()
     delete ui;
 }
 
-
+/*
+ * send a request to query infomation
+ * ids are splited by ',' in lineEdit widget
+ */
 void Widget::on_pushButton_clicked()
 {
     QStringList urls = ui->lineEdit->text().split(',');
     int i = 0;
 
     while (i < urls.count()) {
-        while (reply != nullptr && reply->isRunning()) {
+        while (reply != nullptr && reply->isRunning()) { // wait for respoense
             QApplication::processEvents();
-        }
-        QString url = baseUrl + urls[i++].simplified();
+        } // must be first
+        QString url = baseUrl + urls[i++].simplified(); // trim id string
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "url: " << url;
         request.setUrl(url);
         reply = nam->get(request);
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "request send.";
-
     }
 }
 
 void Widget::getInfo()
 {
+    /*
+     * write log
+     */
     QFile log(logPath);
     log.open(QIODevice::WriteOnly | QIODevice::Append);
     log.write(QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]%1\n").arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()).toUtf8());
@@ -104,9 +119,12 @@ void Widget::getInfo()
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "cid: " << cid;
     log.write(QString("cid: %1\n").arg(cid).toUtf8());
-    data = reply->readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(data);
+    data = reply->readAll(); // get response data
+    QJsonDocument doc = QJsonDocument::fromJson(data); // convert response text to JSON object
 
+    /*
+     * set member variables
+     */
     QJsonObject root = doc.object();
     double bitrate = root["bitrate"].toDouble();
     bool isMonthly = root["monthly"].toBool();
@@ -115,6 +133,9 @@ void Widget::getInfo()
              << "is monthly: " << isMonthly;
     log.write(QString("isMonthly: %1\n").arg(isMonthly).toUtf8());
 
+    /*
+     * append different types of QTreeWidget depends on query result
+     */
     if (success) {
         if (isMonthly) {
             monthly.append(cid);
@@ -144,6 +165,10 @@ void Widget::getInfo()
 
 void Widget::keyPressEvent(QKeyEvent* ev)
 {
+    /*
+     * only for debug use
+     * print debug info when F8 is pressed
+     */
     if (ev->key() == Qt::Key_F8)
     {
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
@@ -151,10 +176,17 @@ void Widget::keyPressEvent(QKeyEvent* ev)
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "status code: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     }
+    /*
+     * execute query when enter or return is pressed
+     */
     if (ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return)
     {
         on_pushButton_clicked();
     }
+    /*
+     * delete selected widgets when delete is pressed
+     * also change associated QStringList
+     */
     if (ev->key() == Qt::Key_Delete)
     {
         qDebug() << "delete!";
@@ -210,6 +242,9 @@ QString Widget::getFailure()
     return failure.join(',');
 }
 
+/*
+ * generate file to store query result
+ */
 void Widget::generateFile(QString type)
 {
     QFile f = QFile(resultPath + type + ".txt");
@@ -245,6 +280,10 @@ void Widget::on_btnFailure_clicked()
     generateFile("failure");
 }
 
+/*
+ * apply settings
+ * also overwrite app.ini
+ */
 void Widget::on_btnApply_clicked()
 {
     baseUrl = ui->inpUrl->text();
