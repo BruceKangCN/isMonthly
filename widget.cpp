@@ -197,15 +197,15 @@ void Widget::keyPressEvent(QKeyEvent* ev)
                     QString type = item->data(1, Qt::DisplayRole).toString();
 
                     if (type == "月额视频：是") {
-                        monthly.remove(monthly.indexOf(content));
+                        monthly.removeAt(monthly.indexOf(content));
                         ui->txtMonthly->setText(monthly.join(','));
                     }
                     if (type == "月额视频：否") {
-                        notmonthly.remove(notmonthly.indexOf(content));
+                        notmonthly.removeAt(notmonthly.indexOf(content));
                         ui->txtNotMonthly->setText(notmonthly.join(','));
                     }
                     if (type == "查询失败") {
-                        failure.remove(failure.indexOf(content));
+                        failure.removeAt(failure.indexOf(content));
                         ui->txtFailure->setText(failure.join(','));
                     }
 
