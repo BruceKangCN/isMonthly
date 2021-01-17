@@ -57,6 +57,10 @@ private slots:
 
     void on_copyFailure_clicked();
 
+    void on_btnLogPath_clicked();
+
+    void on_btnResultDir_clicked();
+
 private:
     Ui::Widget *ui;
 
@@ -75,11 +79,6 @@ private:
     QNetworkRequest request;
     QNetworkReply *reply;
     QByteArray data;
-
-    /*
-     * to show infomation
-     */
-    QList<QTreeWidgetItem*> list;
 
     /*
      * to store ids

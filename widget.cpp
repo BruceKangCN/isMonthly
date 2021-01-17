@@ -6,6 +6,8 @@
 #include <QFile>
 
 #include <QClipboard>
+#include <QDir>
+#include <QFileDialog>
 
 #include <QList>
 #include <QNetworkProxy>
@@ -140,19 +142,11 @@ void Widget::getInfo()
         if (isMonthly) {
             monthly.append(cid);
             ui->txtMonthly->setText(monthly.join(','));
-            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：是", QString("%1k").arg(bitrate)}));
-            list.append(item);
-            item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"bitrate\": %1").arg(bitrate))));
-            item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"monthly\": %1").arg(isMonthly?"true":"false"))));
-            item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"success\": %1").arg(success?"true":"false"))));
+            new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：是", QString("%1k").arg(bitrate)}));
         } else {
             notmonthly.append(cid);
             ui->txtNotMonthly->setText(notmonthly.join(','));
-            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：否", QString("%1k").arg(bitrate)}));
-            list.append(item);
-            item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"bitrate\": %1").arg(bitrate))));
-            item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"monthly\": %1").arg(isMonthly?"true":"false"))));
-            item->addChild(new QTreeWidgetItem(item, QStringList(QString("\"success\": %1").arg(success?"true":"false"))));
+            new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：否", QString("%1k").arg(bitrate)}));
         }
     } else {
         failure.append(cid);
@@ -215,7 +209,6 @@ void Widget::keyPressEvent(QKeyEvent* ev)
                         ui->txtFailure->setText(failure.join(','));
                     }
 
-                    list.removeOne(item);
                     delete item;
                 } else {
                     qDebug() << "remove child item";
@@ -247,7 +240,7 @@ QString Widget::getFailure()
  */
 void Widget::generateFile(QString type)
 {
-    QFile f = QFile(resultPath + type + ".txt");
+    QFile f = QFile(QDir(resultPath).filePath(type + ".txt")); // safely join the directory and filename
     f.open(QIODevice::WriteOnly);
     QString content;
 
@@ -310,4 +303,22 @@ void Widget::on_copyNotMonthly_clicked()
 void Widget::on_copyFailure_clicked()
 {
     QGuiApplication::clipboard()->setText(ui->txtFailure->toPlainText());
+}
+
+void Widget::on_btnLogPath_clicked()
+{
+    QString path = QFileDialog::getSaveFileName(nullptr, QString(), ".");
+    if (path != "") {
+        logPath = path;
+        ui->inpLog->setText(logPath);
+    }
+}
+
+void Widget::on_btnResultDir_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(nullptr, QString(), ".");
+    if (path != "") {
+        resultPath = path;
+        ui->inpResult->setText(resultPath);
+    }
 }
