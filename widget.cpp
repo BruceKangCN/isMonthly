@@ -11,6 +11,9 @@
 
 #include <QList>
 #include <QNetworkProxy>
+#include <QUrl>
+#include <QNetworkProxyQuery>
+#include <QNetworkProxyFactory>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -30,11 +33,14 @@ Widget::Widget(QWidget *parent)
     qDebug() << QSslSocket::supportsSsl();
 
     /*
-     * get settings from ini file
+     * set default value
      */
     baseUrl = "https://v2.mahuateng.cf/isMonthly/";
     logPath = "isMonthly.log";
     resultPath = "result/";
+    /*
+     * get settings from ini file
+     */
     config = new QSettings("app.ini", QSettings::IniFormat);
     if (config->contains("url")) {
         baseUrl = config->value("url").toString();
@@ -54,6 +60,24 @@ Widget::Widget(QWidget *parent)
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "find result: " << resultPath;
     }
+    if (config->contains("proxy")) {
+        QString v = config->value("proxy").toString();
+        if (v == "no") {
+            ui->radioNoProxy->setChecked(true);
+            QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+        } else if (parseHttpProxy(v)) {
+            ui->radioCustom->setChecked(true);
+            QNetworkProxy::setApplicationProxy(proxy);
+        } else {
+            ui->radioSystemProxy->setChecked(true);
+            for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+                if (p.type() == QNetworkProxy::HttpProxy) {
+                    QNetworkProxy::setApplicationProxy(p);
+                    break;
+                }
+            }
+        }
+    }
 
     /*
      * init QStringLists
@@ -66,7 +90,6 @@ Widget::Widget(QWidget *parent)
      * init QNetworkAccessManager
      */
     nam = new QNetworkAccessManager(this);
-    nam->setProxy(QNetworkProxy::DefaultProxy);
     connect(nam, &QNetworkAccessManager::finished, this, &Widget::getInfo);
 }
 
@@ -287,6 +310,36 @@ void Widget::on_btnApply_clicked()
     config->setValue("log", logPath);
     config->setValue("result", resultPath);
 
+    /*
+     * proxy settings
+     */
+    if (ui->radioNoProxy->isChecked()) {
+        QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+        config->setValue("proxy", "no");
+    }
+    if (ui->radioSystemProxy->isChecked()) {
+        for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+            if (p.type() == QNetworkProxy::HttpProxy) {
+                QNetworkProxy::setApplicationProxy(p);
+                break;
+            }
+        }
+        config->setValue("proxy", "system");
+    }
+    if (ui->radioCustom->isChecked()) {
+        QString proxyUrl = ui->inpHttpProxy->text();
+        if (parseHttpProxy(proxyUrl)) {
+            QNetworkProxy::setApplicationProxy(proxy);
+            config->setValue("proxy", proxyUrl);
+        } else {
+            QNetworkProxy::setApplicationProxy(QNetworkProxy::DefaultProxy);
+            ui->radioCustom->setChecked(false);
+            ui->radioSystemProxy->setChecked(true);
+            ui->inpHttpProxy->setText(proxyUrl + "[解析出错]");
+            config->setValue("proxy", "system");
+        }
+    }
+
     config->sync();
 }
 
@@ -321,4 +374,39 @@ void Widget::on_btnResultDir_clicked()
         resultPath = path;
         ui->inpResult->setText(resultPath);
     }
+}
+
+bool Widget::parseHttpProxy(QString url) {
+    QUrl proxyUrl(url);
+    if (!proxyUrl.isValid() || proxyUrl.scheme() != "http") {
+        return false;
+    }
+    proxy.setType(QNetworkProxy::HttpProxy);
+
+    // validate host
+    QString host = proxyUrl.host();
+    qDebug() << "host: " << host;
+    if (host == "") {
+        return false;
+    }
+    proxy.setHostName(host);
+
+    // validate port
+    int port = proxyUrl.port();
+    qDebug() << "port: " << port;
+    if (port == -1) {
+        return false;
+    }
+    proxy.setPort(port);
+
+    QString userName = proxyUrl.userName();
+    if (userName != "") {
+        proxy.setUser(userName);
+    }
+    QString password = proxyUrl.password();
+    if (password != "") {
+        proxyUrl.setPassword(password);
+    }
+
+    return true;
 }

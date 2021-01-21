@@ -14,6 +14,7 @@
 #include <QKeyEvent>
 #include <QTreeWidget>
 #include <QSettings>
+#include <QNetworkProxy>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -39,6 +40,7 @@ protected:
     QString getMonthly();
     QString getNotMonthly();
     QString getFailure();
+    bool parseHttpProxy(QString url);
 
 private slots:
     void on_pushButton_clicked();
@@ -71,6 +73,7 @@ private:
     QString baseUrl;
     QString logPath;
     QString resultPath;
+    QNetworkProxy proxy;
 
     /*
      * for resolving network requests
