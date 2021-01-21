@@ -324,7 +324,7 @@
            <item row="4" column="0" colspan="3">
             <widget class="QGroupBox" name="groupBox">
              <property name="title">
-              <string> http代理</string>
+              <string> 代理</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
@@ -337,7 +337,7 @@
               <item>
                <widget class="QRadioButton" name="radioSystemProxy">
                 <property name="text">
-                 <string>系统代理</string>
+                 <string>系统代理(http/socks5)</string>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -355,7 +355,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="inpHttpProxy"/>
+               <widget class="QLineEdit" name="inpProxy"/>
               </item>
              </layout>
             </widget>

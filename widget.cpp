@@ -65,13 +65,13 @@ Widget::Widget(QWidget *parent)
         if (v == "no") {
             ui->radioNoProxy->setChecked(true);
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
-        } else if (parseHttpProxy(v)) {
+        } else if (parseProxy(v)) {
             ui->radioCustom->setChecked(true);
             QNetworkProxy::setApplicationProxy(proxy);
         } else {
             ui->radioSystemProxy->setChecked(true);
             for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
-                if (p.type() == QNetworkProxy::HttpProxy) {
+                if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
                 }
@@ -319,7 +319,7 @@ void Widget::on_btnApply_clicked()
     }
     if (ui->radioSystemProxy->isChecked()) {
         for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
-            if (p.type() == QNetworkProxy::HttpProxy) {
+            if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                 QNetworkProxy::setApplicationProxy(p);
                 break;
             }
@@ -327,15 +327,20 @@ void Widget::on_btnApply_clicked()
         config->setValue("proxy", "system");
     }
     if (ui->radioCustom->isChecked()) {
-        QString proxyUrl = ui->inpHttpProxy->text();
-        if (parseHttpProxy(proxyUrl)) {
+        QString proxyUrl = ui->inpProxy->text();
+        if (parseProxy(proxyUrl)) {
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
         } else {
-            QNetworkProxy::setApplicationProxy(QNetworkProxy::DefaultProxy);
+            for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+                if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
+                    QNetworkProxy::setApplicationProxy(p);
+                    break;
+                }
+            }
             ui->radioCustom->setChecked(false);
             ui->radioSystemProxy->setChecked(true);
-            ui->inpHttpProxy->setText(proxyUrl + "[解析出错]");
+            ui->inpProxy->setText(proxyUrl + "[解析出错]");
             config->setValue("proxy", "system");
         }
     }
@@ -376,12 +381,20 @@ void Widget::on_btnResultDir_clicked()
     }
 }
 
-bool Widget::parseHttpProxy(QString url) {
+bool Widget::parseProxy(QString url) {
     QUrl proxyUrl(url);
-    if (!proxyUrl.isValid() || proxyUrl.scheme() != "http") {
+    if (!proxyUrl.isValid()) {
         return false;
     }
-    proxy.setType(QNetworkProxy::HttpProxy);
+
+    // validate scheme
+    if (proxyUrl.scheme() == "socks5") {
+        proxy.setType(QNetworkProxy::Socks5Proxy);
+    } else if (proxyUrl.scheme() == "http") {
+        proxy.setType(QNetworkProxy::HttpProxy);
+    } else {
+        return false;
+    }
 
     // validate host
     QString host = proxyUrl.host();

@@ -40,7 +40,7 @@ protected:
     QString getMonthly();
     QString getNotMonthly();
     QString getFailure();
-    bool parseHttpProxy(QString url);
+    bool parseProxy(QString url);
 
 private slots:
     void on_pushButton_clicked();
