@@ -29,7 +29,7 @@ public:
     ~Widget();
 
     void keyPressEvent(QKeyEvent* ev);
-    void generateFile(QString type);
+    void generateFile(const QString& type) const;
 
 protected:
     void getInfo(); // get query state, is monthly state, bitrate of a video
@@ -37,27 +37,27 @@ protected:
     /*
      * concat QStrings with ','
      */
-    QString getMonthly();
-    QString getNotMonthly();
-    QString getFailure();
+    QString getMonthly() const;
+    QString getNotMonthly() const;
+    QString getFailure() const;
     bool parseProxy(QString url);
 
 private slots:
     void on_pushButton_clicked();
 
-    void on_btnMonthly_clicked();
+    void on_btnMonthly_clicked() const;
 
-    void on_btnNotMonthly_clicked();
+    void on_btnNotMonthly_clicked() const;
 
-    void on_btnFailure_clicked();
+    void on_btnFailure_clicked() const;
 
     void on_btnApply_clicked();
 
-    void on_copyMonthly_clicked();
+    void on_copyMonthly_clicked() const;
 
-    void on_copyNotMonthly_clicked();
+    void on_copyNotMonthly_clicked() const;
 
-    void on_copyFailure_clicked();
+    void on_copyFailure_clicked() const;
 
     void on_btnLogPath_clicked();
 

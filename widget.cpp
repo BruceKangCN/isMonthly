@@ -243,17 +243,17 @@ void Widget::keyPressEvent(QKeyEvent* ev)
     }
 }
 
-QString Widget::getMonthly()
+QString Widget::getMonthly() const
 {
     return monthly.join(',');
 }
 
-QString Widget::getNotMonthly()
+QString Widget::getNotMonthly() const
 {
     return notmonthly.join(',');
 }
 
-QString Widget::getFailure()
+QString Widget::getFailure() const
 {
     return failure.join(',');
 }
@@ -261,7 +261,7 @@ QString Widget::getFailure()
 /*
  * generate file to store query result
  */
-void Widget::generateFile(QString type)
+void Widget::generateFile(const QString& type) const
 {
     QFile f = QFile(QDir(resultPath).filePath(type + ".txt")); // safely join the directory and filename
     f.open(QIODevice::WriteOnly);
@@ -281,17 +281,17 @@ void Widget::generateFile(QString type)
     f.close();
 }
 
-void Widget::on_btnMonthly_clicked()
+void Widget::on_btnMonthly_clicked() const
 {
     generateFile("monthly");
 }
 
-void Widget::on_btnNotMonthly_clicked()
+void Widget::on_btnNotMonthly_clicked() const
 {
     generateFile("notmonthly");
 }
 
-void Widget::on_btnFailure_clicked()
+void Widget::on_btnFailure_clicked() const
 {
     generateFile("failure");
 }
@@ -348,17 +348,17 @@ void Widget::on_btnApply_clicked()
     config->sync();
 }
 
-void Widget::on_copyMonthly_clicked()
+void Widget::on_copyMonthly_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtMonthly->toPlainText());
 }
 
-void Widget::on_copyNotMonthly_clicked()
+void Widget::on_copyNotMonthly_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtNotMonthly->toPlainText());
 }
 
-void Widget::on_copyFailure_clicked()
+void Widget::on_copyFailure_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtFailure->toPlainText());
 }
