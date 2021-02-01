@@ -43,24 +43,28 @@ protected:
     bool parseProxy(QString url);
 
 private slots:
-    void on_pushButton_clicked();
+    void on_pushButton_clicked(); // start query
 
+    /*
+     * generate specific file
+     */
     void on_btnMonthly_clicked() const;
-
     void on_btnNotMonthly_clicked() const;
-
     void on_btnFailure_clicked() const;
 
-    void on_btnApply_clicked();
+    void on_btnApply_clicked(); // apply settings
 
+    /*
+     * copy ids to clipboard
+     */
     void on_copyMonthly_clicked() const;
-
     void on_copyNotMonthly_clicked() const;
-
     void on_copyFailure_clicked() const;
 
+    /*
+     * select path/dir
+     */
     void on_btnLogPath_clicked();
-
     void on_btnResultDir_clicked();
 
 private:
