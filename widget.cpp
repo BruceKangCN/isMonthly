@@ -36,8 +36,9 @@ Widget::Widget(QWidget *parent)
      * set default value
      */
     baseUrl = "https://v2.mahuateng.cf/isMonthly/";
+    quotaUrl = "https://v2.mahuateng.cf/check_quota?serial_code=";
+    serialCode = "00000-00000-00000-00000-00000";
     logPath = "isMonthly.log";
-    resultPath = "result/";
     /*
      * get settings from ini file
      */
@@ -48,17 +49,23 @@ Widget::Widget(QWidget *parent)
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "find url: " << baseUrl;
     }
+    if (config->contains("quotaUrl")) {
+        quotaUrl = config->value("quotaUrl").toString();
+        ui->inpQuotaUrl->setText(quotaUrl);
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find quotaUrl: " << quotaUrl;
+    }
+    if (config->contains("serialCode")) {
+        serialCode = config->value("serialCode").toString();
+        ui->inpSN->setText(serialCode);
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find serialCode: " << serialCode;
+    }
     if (config->contains("log")) {
         logPath = config->value("log").toString();
         ui->inpLog->setText(logPath);
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "find log: " << logPath;
-    }
-    if (config->contains("result")) {
-        resultPath = config->value("result").toString();
-        ui->inpResult->setText(resultPath);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find result: " << resultPath;
     }
     if (config->contains("proxy")) {
         QString v = config->value("proxy").toString();
@@ -70,7 +77,7 @@ Widget::Widget(QWidget *parent)
             QNetworkProxy::setApplicationProxy(proxy);
         } else {
             ui->radioSystemProxy->setChecked(true);
-            for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+            for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
                 if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
@@ -78,6 +85,8 @@ Widget::Widget(QWidget *parent)
             }
         }
     }
+
+    getQuota(); // init quota info
 
     /*
      * init QStringLists
@@ -97,8 +106,6 @@ Widget::~Widget()
 {
     delete nam;
     delete config;
-
-    generateFile("monthly");
 
     delete ui;
 }
@@ -145,6 +152,8 @@ void Widget::getInfo()
              << "cid: " << cid;
     log.write(QString("cid: %1\n").arg(cid).toUtf8());
     data = reply->readAll(); // get response data
+    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+             << "data: " << QString::fromUtf8(data);
     QJsonDocument doc = QJsonDocument::fromJson(data); // convert response text to JSON object
 
     /*
@@ -259,56 +268,20 @@ QString Widget::getFailure() const
 }
 
 /*
- * generate file to store query result
- */
-void Widget::generateFile(const QString& type) const
-{
-    QFile f = QFile(QDir(resultPath).filePath(type + ".txt")); // safely join the directory and filename
-    f.open(QIODevice::WriteOnly);
-    QString content;
-
-    if (type == "monthly") {
-        content = getMonthly();
-    }
-    if (type == "notmonthly") {
-        content = getNotMonthly();
-    }
-    if (type == "failure") {
-        content = getFailure();
-    }
-
-    f.write(content.toUtf8());
-    f.close();
-}
-
-void Widget::on_btnMonthly_clicked() const
-{
-    generateFile("monthly");
-}
-
-void Widget::on_btnNotMonthly_clicked() const
-{
-    generateFile("notmonthly");
-}
-
-void Widget::on_btnFailure_clicked() const
-{
-    generateFile("failure");
-}
-
-/*
  * apply settings
  * also overwrite app.ini
  */
 void Widget::on_btnApply_clicked()
 {
     baseUrl = ui->inpUrl->text();
+    quotaUrl = ui->inpQuotaUrl->text();
+    serialCode = ui->inpSN->text();
     logPath = ui->inpLog->text();
-    resultPath = ui->inpResult->text();
 
     config->setValue("url", baseUrl);
+    config->setValue("quotaUrs", quotaUrl);
+    config->setValue("serialCode", serialCode);
     config->setValue("log", logPath);
-    config->setValue("result", resultPath);
 
     /*
      * proxy settings
@@ -372,15 +345,6 @@ void Widget::on_btnLogPath_clicked()
     }
 }
 
-void Widget::on_btnResultDir_clicked()
-{
-    QString path = QFileDialog::getExistingDirectory(nullptr, QString(), ".");
-    if (path != "") {
-        resultPath = path;
-        ui->inpResult->setText(resultPath);
-    }
-}
-
 bool Widget::parseProxy(QString url) {
     QUrl proxyUrl(url);
     if (!proxyUrl.isValid()) {
@@ -422,4 +386,20 @@ bool Widget::parseProxy(QString url) {
     }
 
     return true;
+}
+
+void Widget::getQuota()
+{
+    QNetworkAccessManager quotaManager = QNetworkAccessManager();
+    QNetworkReply *quotaReply = quotaManager.get(QNetworkRequest(quotaUrl + serialCode));
+    while (quotaReply != nullptr && quotaReply->isRunning()) {
+        QApplication::processEvents();
+    }
+    QStringList lines = QString::fromUtf8(quotaReply->readAll()).split('\n');
+    ui->inpQuota->setText(lines[lines.count() - 3]);
+}
+
+void Widget::on_btnQuota_clicked()
+{
+    getQuota();
 }

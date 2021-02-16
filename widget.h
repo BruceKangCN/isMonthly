@@ -44,14 +44,6 @@ protected:
 
 private slots:
     void on_pushButton_clicked(); // start query
-
-    /*
-     * generate specific file
-     */
-    void on_btnMonthly_clicked() const;
-    void on_btnNotMonthly_clicked() const;
-    void on_btnFailure_clicked() const;
-
     void on_btnApply_clicked(); // apply settings
 
     /*
@@ -61,11 +53,10 @@ private slots:
     void on_copyNotMonthly_clicked() const;
     void on_copyFailure_clicked() const;
 
-    /*
-     * select path/dir
-     */
-    void on_btnLogPath_clicked();
-    void on_btnResultDir_clicked();
+    void on_btnLogPath_clicked(); // select log path
+    void getQuota(); // get quota info
+
+    void on_btnQuota_clicked();
 
 private:
     Ui::Widget *ui;
@@ -75,8 +66,9 @@ private:
      * configuration
      */
     QString baseUrl;
+    QString quotaUrl;
+    QString serialCode;
     QString logPath;
-    QString resultPath;
     QNetworkProxy proxy;
 
     /*
