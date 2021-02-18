@@ -24,7 +24,7 @@ Widget::Widget(QWidget *parent)
     this->setWindowTitle("is monthly");
 
     /*
-     * check SSL infomation, only for debug use
+     * check SSL infomation, only for debug purpose
      */
     qDebug() << QSslSocket::sslLibraryBuildVersionNumber();
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
@@ -69,6 +69,8 @@ Widget::Widget(QWidget *parent)
     }
     if (config->contains("proxy")) {
         QString v = config->value("proxy").toString();
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find proxy: " << v;
         if (v == "no") {
             ui->radioNoProxy->setChecked(true);
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
