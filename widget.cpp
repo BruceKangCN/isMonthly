@@ -4,11 +4,9 @@
 #include <QtDebug>
 #include <QDateTime>
 #include <QFile>
-
 #include <QClipboard>
 #include <QDir>
 #include <QFileDialog>
-
 #include <QList>
 #include <QNetworkProxy>
 #include <QUrl>
@@ -76,6 +74,7 @@ Widget::Widget(QWidget *parent)
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
         } else if (parseProxy(v)) {
             ui->radioCustom->setChecked(true);
+            ui->inpProxy->setText(v);
             QNetworkProxy::setApplicationProxy(proxy);
         } else {
             ui->radioSystemProxy->setChecked(true);
@@ -88,8 +87,6 @@ Widget::Widget(QWidget *parent)
         }
     }
 
-    getQuota(); // init quota info
-
     /*
      * init QStringLists
      */
@@ -101,12 +98,15 @@ Widget::Widget(QWidget *parent)
      * init QNetworkAccessManager
      */
     nam = new QNetworkAccessManager(this);
-    connect(nam, &QNetworkAccessManager::finished, this, &Widget::getInfo);
+    quotaManager = new QNetworkAccessManager(this);
+
+    getQuota(); // init quota info
 }
 
 Widget::~Widget()
 {
     delete nam;
+    delete quotaManager;
     delete config;
 
     delete ui;
@@ -132,6 +132,7 @@ void Widget::on_pushButton_clicked()
         reply = nam->get(request);
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "request send.";
+        connect(reply, &QIODevice::readyRead, this, &Widget::getInfo);
     }
 }
 
@@ -392,16 +393,23 @@ bool Widget::parseProxy(QString url) {
 
 void Widget::getQuota()
 {
-    QNetworkAccessManager quotaManager = QNetworkAccessManager();
-    QNetworkReply *quotaReply = quotaManager.get(QNetworkRequest(quotaUrl + serialCode));
-    while (quotaReply != nullptr && quotaReply->isRunning()) {
-        QApplication::processEvents();
-    }
-    QStringList lines = QString::fromUtf8(quotaReply->readAll()).split('\n');
-    ui->inpQuota->setText(lines[lines.count() - 3]);
+    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+             << "query for quota...";
+    quotaReply = quotaManager->get(QNetworkRequest(quotaUrl + serialCode));
+    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+             << "waiting for quota reply...";
+    connect(quotaReply, &QIODevice::readyRead, this, &Widget::setQuota);
 }
 
 void Widget::on_btnQuota_clicked()
 {
     getQuota();
+}
+
+void Widget::setQuota()
+{
+    QStringList lines = QString::fromUtf8(quotaReply->readAll()).split('\n');
+    if (lines.count() > 3) { // check wheather return successfully
+        ui->inpQuota->setText(lines[lines.count() - 3]);
+    }
 }

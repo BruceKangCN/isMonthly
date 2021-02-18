@@ -33,6 +33,7 @@ public:
 
 protected:
     void getInfo(); // get query state, is monthly state, bitrate of a video
+    void setQuota(); // set quota info
 
     /*
      * concat QStrings with ','
@@ -75,8 +76,10 @@ private:
      * for resolving network requests
      */
     QNetworkAccessManager *nam;
+    QNetworkAccessManager *quotaManager;
     QNetworkRequest request;
     QNetworkReply *reply;
+    QNetworkReply *quotaReply;
     QByteArray data;
 
     /*
