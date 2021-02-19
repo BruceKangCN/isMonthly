@@ -12,6 +12,7 @@
 #include <QUrl>
 #include <QNetworkProxyQuery>
 #include <QNetworkProxyFactory>
+#include <QRegularExpression>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -118,17 +119,15 @@ Widget::~Widget()
  */
 void Widget::on_pushButton_clicked()
 {
-    QStringList urls = ui->lineEdit->text().split(',');
-    int i = 0;
+    QStringList ids = ui->lineEdit->text().split(QRegularExpression("\\s*,\\s*"));
 
-    while (i < urls.count()) {
+    for (QString& id : ids) {
         while (reply != nullptr && reply->isRunning()) { // wait for respoense
             QApplication::processEvents();
         } // must be first
-        QString url = baseUrl + urls[i++].simplified(); // trim id string
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "url: " << url;
-        request.setUrl(url);
+                 << "id: " << id;
+        request.setUrl(baseUrl + id);
         reply = nam->get(request);
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "request send.";
@@ -195,7 +194,7 @@ void Widget::getInfo()
 void Widget::keyPressEvent(QKeyEvent* ev)
 {
     /*
-     * only for debug use
+     * only for debug purpose
      * print debug info when F8 is pressed
      */
     if (ev->key() == Qt::Key_F8)
