@@ -88,6 +88,12 @@ Widget::Widget(QWidget *parent)
             }
         }
     }
+    if (config->contains("language")) {
+        const int language = config->value("language").toInt();
+        ui->boxLanguage->setCurrentIndex(language);
+        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
+                 << "find language index: " << language;
+    }
 
     /*
      * init connections
@@ -257,11 +263,13 @@ void Widget::on_btnApply_clicked()
     quotaUrl = ui->inpQuotaUrl->text();
     serialCode = ui->inpSN->text();
     logPath = ui->inpLog->text();
+    const int language = ui->boxLanguage->currentIndex();
 
     config->setValue("url", baseUrl);
     config->setValue("quotaUrs", quotaUrl);
     config->setValue("serialCode", serialCode);
     config->setValue("log", logPath);
+    config->setValue("language", language);
 
     /*
      * proxy settings

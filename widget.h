@@ -56,7 +56,6 @@ private slots:
 
     void on_btnLogPath_clicked(); // select log path
     void getQuota(); // get quota info
-
     void on_btnQuota_clicked();
 
 private:
