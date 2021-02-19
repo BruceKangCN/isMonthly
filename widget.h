@@ -79,7 +79,6 @@ private:
     QNetworkAccessManager* quotaManager;
     QNetworkRequest request;
     QNetworkReply *quotaReply;
-    QByteArray data;
 
     /*
      * to store ids

@@ -17,12 +17,22 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
+    , baseUrl("https://v2.mahuateng.cf/isMonthly/")
+    , quotaUrl("https://v2.mahuateng.cf/check_quota?serial_code=")
+    , serialCode("00000-00000-00000-00000-00000")
+    , logPath("isMonthly.log")
+    , monthly(QStringList())
+    , notmonthly(QStringList())
+    , failure(QStringList())
+    , config(new QSettings("app.ini", QSettings::IniFormat))
+    , nam(new QNetworkAccessManager(this))
+    , quotaManager(new QNetworkAccessManager(this))
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
 
     /*
-     * check SSL infomation, only for debug purpose
+     * check SSL compatibility, only for debug purpose
      */
     qDebug() << QSslSocket::sslLibraryBuildVersionNumber();
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
@@ -31,16 +41,8 @@ Widget::Widget(QWidget *parent)
     qDebug() << QSslSocket::supportsSsl();
 
     /*
-     * set default value
-     */
-    baseUrl = "https://v2.mahuateng.cf/isMonthly/";
-    quotaUrl = "https://v2.mahuateng.cf/check_quota?serial_code=";
-    serialCode = "00000-00000-00000-00000-00000";
-    logPath = "isMonthly.log";
-    /*
      * get settings from ini file
      */
-    config = new QSettings("app.ini", QSettings::IniFormat);
     if (config->contains("url")) {
         baseUrl = config->value("url").toString();
         ui->inpUrl->setText(baseUrl);
@@ -88,17 +90,8 @@ Widget::Widget(QWidget *parent)
     }
 
     /*
-     * init QStringLists
+     * init connections
      */
-    monthly = QStringList();
-    notmonthly = QStringList();
-    failure = QStringList();
-
-    /*
-     * init QNetworkAccessManager
-     */
-    nam = new QNetworkAccessManager(this);
-    quotaManager = new QNetworkAccessManager(this);
     connect(nam, &QNetworkAccessManager::finished, this, &Widget::getInfo);
     connect(quotaManager, &QNetworkAccessManager::finished, this, &Widget::setQuota);
 
@@ -145,12 +138,11 @@ void Widget::getInfo(QNetworkReply* reply)
 
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
             << "get data.";
-    log.write(QString("get data.\n").toUtf8());
     QString cid = reply->url().toString().split("/")[4];
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "cid: " << cid;
     log.write(QString("cid: %1\n").arg(cid).toUtf8());
-    data = reply->readAll(); // get response data
+    QByteArray data = reply->readAll(); // get response data
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "data: " << QString::fromUtf8(data);
     QJsonDocument doc = QJsonDocument::fromJson(data); // convert response text to JSON object
@@ -173,16 +165,16 @@ void Widget::getInfo(QNetworkReply* reply)
         if (isMonthly) {
             monthly.append(cid);
             ui->txtMonthly->setText(monthly.join(','));
-            new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：是", QString("%1k").arg(bitrate)}));
+            new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("月额视频：是"), QString("%1k").arg(bitrate)}));
         } else {
             notmonthly.append(cid);
             ui->txtNotMonthly->setText(notmonthly.join(','));
-            new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "月额视频：否", QString("%1k").arg(bitrate)}));
+            new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("月额视频：否"), QString("%1k").arg(bitrate)}));
         }
     } else {
         failure.append(cid);
         ui->txtFailure->setText(failure.join(','));
-        new QTreeWidgetItem(ui->treeWidget, QStringList({QString("%1").arg(cid), "查询失败"}));
+        new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("查询失败")}));
     }
 
     log.close();
@@ -216,15 +208,15 @@ void Widget::keyPressEvent(QKeyEvent* ev)
                     QString content = item->data(0, Qt::DisplayRole).toString();
                     QString type = item->data(1, Qt::DisplayRole).toString();
 
-                    if (type == "月额视频：是") {
+                    if (type == tr("月额视频：是")) {
                         monthly.removeAt(monthly.indexOf(content));
                         ui->txtMonthly->setText(monthly.join(','));
                     }
-                    if (type == "月额视频：否") {
+                    if (type == tr("月额视频：否")) {
                         notmonthly.removeAt(notmonthly.indexOf(content));
                         ui->txtNotMonthly->setText(notmonthly.join(','));
                     }
-                    if (type == "查询失败") {
+                    if (type == tr("查询失败")) {
                         failure.removeAt(failure.indexOf(content));
                         ui->txtFailure->setText(failure.join(','));
                     }
@@ -301,7 +293,7 @@ void Widget::on_btnApply_clicked()
             }
             ui->radioCustom->setChecked(false);
             ui->radioSystemProxy->setChecked(true);
-            ui->inpProxy->setText(proxyUrl + "[解析出错]");
+            ui->inpProxy->setText(proxyUrl + "[" + tr("解析出错") + "]");
             config->setValue("proxy", "system");
         }
     }
