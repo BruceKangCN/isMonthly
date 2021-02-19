@@ -32,7 +32,7 @@ public:
     void generateFile(const QString& type) const;
 
 protected:
-    void getInfo(); // get query state, is monthly state, bitrate of a video
+    void getInfo(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
     void setQuota(); // set quota info
 
     /*
@@ -60,7 +60,7 @@ private slots:
     void on_btnQuota_clicked();
 
 private:
-    Ui::Widget *ui;
+    Ui::Widget* ui;
 
     QSettings* config;
     /*
@@ -75,10 +75,9 @@ private:
     /*
      * for resolving network requests
      */
-    QNetworkAccessManager *nam;
-    QNetworkAccessManager *quotaManager;
+    QNetworkAccessManager* nam;
+    QNetworkAccessManager* quotaManager;
     QNetworkRequest request;
-    QNetworkReply *reply;
     QNetworkReply *quotaReply;
     QByteArray data;
 

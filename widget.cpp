@@ -17,7 +17,6 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
-    , reply(nullptr)
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -100,6 +99,8 @@ Widget::Widget(QWidget *parent)
      */
     nam = new QNetworkAccessManager(this);
     quotaManager = new QNetworkAccessManager(this);
+    connect(nam, &QNetworkAccessManager::finished, this, &Widget::getInfo);
+    connect(quotaManager, &QNetworkAccessManager::finished, this, &Widget::setQuota);
 
     getQuota(); // init quota info
 }
@@ -122,20 +123,16 @@ void Widget::on_pushButton_clicked()
     QStringList ids = ui->lineEdit->text().split(QRegularExpression("\\s*,\\s*"));
 
     for (QString& id : ids) {
-        while (reply != nullptr && reply->isRunning()) { // wait for respoense
-            QApplication::processEvents();
-        } // must be first
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "id: " << id;
         request.setUrl(baseUrl + id);
-        reply = nam->get(request);
+        nam->get(request);
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "request send.";
-        connect(reply, &QIODevice::readyRead, this, &Widget::getInfo);
     }
 }
 
-void Widget::getInfo()
+void Widget::getInfo(QNetworkReply* reply)
 {
     /*
      * write log
@@ -193,17 +190,6 @@ void Widget::getInfo()
 
 void Widget::keyPressEvent(QKeyEvent* ev)
 {
-    /*
-     * only for debug purpose
-     * print debug info when F8 is pressed
-     */
-    if (ev->key() == Qt::Key_F8)
-    {
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "is reply finished: " << reply->isFinished();
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "status code: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    }
     /*
      * execute query when enter or return is pressed
      */
@@ -397,7 +383,6 @@ void Widget::getQuota()
     quotaReply = quotaManager->get(QNetworkRequest(quotaUrl + serialCode));
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "waiting for quota reply...";
-    connect(quotaReply, &QIODevice::readyRead, this, &Widget::setQuota);
 }
 
 void Widget::on_btnQuota_clicked()
