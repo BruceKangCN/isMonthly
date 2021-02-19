@@ -151,9 +151,9 @@ void Widget::getInfo(QNetworkReply* reply)
      * set member variables
      */
     QJsonObject root = doc.object();
-    double bitrate = root["bitrate"].toDouble();
-    bool isMonthly = root["monthly"].toBool();
-    bool success = root["success"].toBool();
+    const double bitrate = root["bitrate"].toDouble();
+    const bool isMonthly = root["monthly"].toBool();
+    const bool success = root["success"].toBool();
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "is monthly: " << isMonthly;
     log.write(QString("isMonthly: %1\n").arg(isMonthly).toUtf8());
