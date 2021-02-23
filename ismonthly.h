@@ -1,6 +1,8 @@
 #ifndef ISMONTHLY_H
 #define ISMONTHLY_H
 
+#include "ismonthlycontroller.h"
+
 #include <QWidget>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -75,10 +77,13 @@ private:
     /*
      * for resolving network requests
      */
-    QNetworkAccessManager* nam;
+//    QNetworkAccessManager* nam;
     QNetworkAccessManager* quotaManager;
-    QNetworkRequest request;
+//    QNetworkRequest request;
     QNetworkReply *quotaReply;
+
+    // access data
+    IsMonthlyController isMonthlyController;
 
     /*
      * to store ids

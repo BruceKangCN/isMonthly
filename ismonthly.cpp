@@ -26,7 +26,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     , notmonthly(QStringList())
     , failure(QStringList())
     , config(new QSettings("app.ini", QSettings::IniFormat))
-    , nam(new QNetworkAccessManager(this))
+    , isMonthlyController(IsMonthlyController())
     , quotaManager(new QNetworkAccessManager(this))
 {
     ui->setupUi(this);
@@ -99,7 +99,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     /*
      * init connections
      */
-    connect(nam, &QNetworkAccessManager::finished, this, &IsMonthly::getInfo);
+    connect(&isMonthlyController, &IsMonthlyController::queryFinished, this, &IsMonthly::getInfo);
     connect(quotaManager, &QNetworkAccessManager::finished, this, &IsMonthly::setQuota);
 
     getQuota(); // init quota info
@@ -107,7 +107,6 @@ IsMonthly::IsMonthly(QWidget *parent)
 
 IsMonthly::~IsMonthly()
 {
-    delete nam;
     delete quotaManager;
     delete config;
 
@@ -123,12 +122,7 @@ void IsMonthly::on_pushButton_clicked()
     QStringList ids = ui->lineEdit->text().split(QRegularExpression("\\s*,\\s*"));
 
     for (QString& id : ids) {
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "id: " << id;
-        request.setUrl(baseUrl + id);
-        nam->get(request);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "request send.";
+        isMonthlyController.query(id);
     }
 }
 

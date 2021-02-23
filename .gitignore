@@ -1,2 +1,7 @@
+build/
+
 # translation binaries
 *.qm
+
+# user files
+*.user
