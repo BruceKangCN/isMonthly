@@ -57,7 +57,6 @@ private slots:
     void on_copyNotMonthly_clicked() const;
     void on_copyFailure_clicked() const;
 
-    void on_btnLogPath_clicked(); // select log path
     void getQuota(); // get quota info
     void on_btnQuota_clicked();
 
@@ -71,15 +70,12 @@ private:
     QString baseUrl;
     QString quotaUrl;
     QString serialCode;
-    QString logPath;
     QNetworkProxy proxy;
 
     /*
      * for resolving network requests
      */
-//    QNetworkAccessManager* nam;
     QNetworkAccessManager* quotaManager;
-//    QNetworkRequest request;
     QNetworkReply *quotaReply;
 
     // access data

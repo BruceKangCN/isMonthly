@@ -21,7 +21,6 @@ IsMonthly::IsMonthly(QWidget *parent)
     , baseUrl("https://v2.mahuateng.cf/isMonthly/")
     , quotaUrl("https://v2.mahuateng.cf/check_quota?serial_code=")
     , serialCode("00000-00000-00000-00000-00000")
-    , logPath("isMonthly.log")
     , monthly(QStringList())
     , notmonthly(QStringList())
     , failure(QStringList())
@@ -61,12 +60,6 @@ IsMonthly::IsMonthly(QWidget *parent)
         ui->inpSN->setText(serialCode);
         qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
                  << "find serialCode: " << serialCode;
-    }
-    if (config->contains("log")) {
-        logPath = config->value("log").toString();
-        ui->inpLog->setText(logPath);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find log: " << logPath;
     }
     if (config->contains("proxy")) {
         QString v = config->value("proxy").toString();
@@ -128,21 +121,11 @@ void IsMonthly::on_pushButton_clicked()
 
 void IsMonthly::getInfo(QNetworkReply* reply)
 {
-    /*
-     * write log
-     */
-    QFile log(logPath);
-    log.open(QIODevice::WriteOnly | QIODevice::Append);
-    log.write(QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]%1\n").arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()).toUtf8());
-    log.write(QString("ssl version: %1\n").arg(QSslSocket::sslLibraryVersionString()).toUtf8());
-    log.write(QString("ssl support: %1\n").arg(QSslSocket::supportsSsl()).toUtf8());
-
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
             << "get data.";
     QString cid = reply->url().toString().split("/")[4];
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "cid: " << cid;
-    log.write(QString("cid: %1\n").arg(cid).toUtf8());
     QByteArray data = reply->readAll(); // get response data
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "data: " << QString::fromUtf8(data);
@@ -157,7 +140,6 @@ void IsMonthly::getInfo(QNetworkReply* reply)
     const bool success = root["success"].toBool();
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "is monthly: " << isMonthly;
-    log.write(QString("isMonthly: %1\n").arg(isMonthly).toUtf8());
 
     /*
      * append different types of QTreeWidget depends on query result
@@ -177,8 +159,6 @@ void IsMonthly::getInfo(QNetworkReply* reply)
         ui->txtFailure->setText(failure.join(','));
         new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("查询失败")}));
     }
-
-    log.close();
 }
 
 void IsMonthly::keyPressEvent(QKeyEvent* ev)
@@ -257,13 +237,11 @@ void IsMonthly::on_btnApply_clicked()
     baseUrl = ui->inpUrl->text();
     quotaUrl = ui->inpQuotaUrl->text();
     serialCode = ui->inpSN->text();
-    logPath = ui->inpLog->text();
     const int language = ui->boxLanguage->currentIndex();
 
     config->setValue("url", baseUrl);
     config->setValue("quotaUrs", quotaUrl);
     config->setValue("serialCode", serialCode);
-    config->setValue("log", logPath);
     config->setValue("language", language);
 
     /*
@@ -317,15 +295,6 @@ void IsMonthly::on_copyNotMonthly_clicked() const
 void IsMonthly::on_copyFailure_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtFailure->toPlainText());
-}
-
-void IsMonthly::on_btnLogPath_clicked()
-{
-    QString path = QFileDialog::getSaveFileName(nullptr, QString(), ".");
-    if (path != "") {
-        logPath = path;
-        ui->inpLog->setText(logPath);
-    }
 }
 
 bool IsMonthly::parseProxy(QString url) {

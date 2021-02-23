@@ -254,11 +254,39 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>286</width>
-            <height>293</height>
+            <width>300</width>
+            <height>281</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>序列号</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QLineEdit" name="inpUrl">
+             <property name="text">
+              <string>https://v2.mahuateng.cf/isMonthly/</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" colspan="2">
+            <widget class="QLineEdit" name="inpQuotaUrl">
+             <property name="text">
+              <string>https://v2.mahuateng.cf/check_quota?serial_code=</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" colspan="2">
+            <widget class="QLineEdit" name="inpSN">
+             <property name="text">
+              <string>00000-00000-00000-00000-00000</string>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_6">
              <property name="text">
@@ -266,7 +294,21 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>视频url</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>月额url</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="2">
             <widget class="QComboBox" name="boxLanguage">
              <property name="currentText">
               <string>简体中文</string>
@@ -289,56 +331,7 @@
              </item>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>视频url</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>月额url</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>序列号</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" colspan="2">
-            <widget class="QLineEdit" name="inpSN">
-             <property name="text">
-              <string>00000-00000-00000-00000-00000</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>日志路径</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="inpLog">
-             <property name="text">
-              <string>isMonthly.log</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="2">
-            <widget class="QPushButton" name="btnLogPath">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0" colspan="2">
+           <item row="4" column="0" colspan="3">
             <widget class="QGroupBox" name="groupBox">
              <property name="title">
               <string>代理</string>
@@ -375,20 +368,6 @@
                <widget class="QLineEdit" name="inpProxy"/>
               </item>
              </layout>
-            </widget>
-           </item>
-           <item row="1" column="1" colspan="2">
-            <widget class="QLineEdit" name="inpUrl">
-             <property name="text">
-              <string>https://v2.mahuateng.cf/isMonthly/</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1" colspan="2">
-            <widget class="QLineEdit" name="inpQuotaUrl">
-             <property name="text">
-              <string>https://v2.mahuateng.cf/check_quota?serial_code=</string>
-             </property>
             </widget>
            </item>
           </layout>
