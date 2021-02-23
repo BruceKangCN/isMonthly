@@ -1,4 +1,4 @@
-#include "widget.h"
+#include "ismonthly.h"
 #include "ui_widget.h"
 
 #include <QtDebug>
@@ -14,7 +14,8 @@
 #include <QNetworkProxyFactory>
 #include <QRegularExpression>
 
-Widget::Widget(QWidget *parent)
+namespace isMonthly {
+IsMonthly::IsMonthly(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
     , baseUrl("https://v2.mahuateng.cf/isMonthly/")
@@ -98,13 +99,13 @@ Widget::Widget(QWidget *parent)
     /*
      * init connections
      */
-    connect(nam, &QNetworkAccessManager::finished, this, &Widget::getInfo);
-    connect(quotaManager, &QNetworkAccessManager::finished, this, &Widget::setQuota);
+    connect(nam, &QNetworkAccessManager::finished, this, &IsMonthly::getInfo);
+    connect(quotaManager, &QNetworkAccessManager::finished, this, &IsMonthly::setQuota);
 
     getQuota(); // init quota info
 }
 
-Widget::~Widget()
+IsMonthly::~IsMonthly()
 {
     delete nam;
     delete quotaManager;
@@ -117,7 +118,7 @@ Widget::~Widget()
  * send a request to query infomation
  * ids are splited by ',' in lineEdit widget
  */
-void Widget::on_pushButton_clicked()
+void IsMonthly::on_pushButton_clicked()
 {
     QStringList ids = ui->lineEdit->text().split(QRegularExpression("\\s*,\\s*"));
 
@@ -131,7 +132,7 @@ void Widget::on_pushButton_clicked()
     }
 }
 
-void Widget::getInfo(QNetworkReply* reply)
+void IsMonthly::getInfo(QNetworkReply* reply)
 {
     /*
      * write log
@@ -186,7 +187,7 @@ void Widget::getInfo(QNetworkReply* reply)
     log.close();
 }
 
-void Widget::keyPressEvent(QKeyEvent* ev)
+void IsMonthly::keyPressEvent(QKeyEvent* ev)
 {
     /*
      * execute query when enter or return is pressed
@@ -238,17 +239,17 @@ void Widget::keyPressEvent(QKeyEvent* ev)
     }
 }
 
-QString Widget::getMonthly() const
+QString IsMonthly::getMonthly() const
 {
     return monthly.join(',');
 }
 
-QString Widget::getNotMonthly() const
+QString IsMonthly::getNotMonthly() const
 {
     return notmonthly.join(',');
 }
 
-QString Widget::getFailure() const
+QString IsMonthly::getFailure() const
 {
     return failure.join(',');
 }
@@ -257,7 +258,7 @@ QString Widget::getFailure() const
  * apply settings
  * also overwrite app.ini
  */
-void Widget::on_btnApply_clicked()
+void IsMonthly::on_btnApply_clicked()
 {
     baseUrl = ui->inpUrl->text();
     quotaUrl = ui->inpQuotaUrl->text();
@@ -309,22 +310,22 @@ void Widget::on_btnApply_clicked()
     config->sync();
 }
 
-void Widget::on_copyMonthly_clicked() const
+void IsMonthly::on_copyMonthly_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtMonthly->toPlainText());
 }
 
-void Widget::on_copyNotMonthly_clicked() const
+void IsMonthly::on_copyNotMonthly_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtNotMonthly->toPlainText());
 }
 
-void Widget::on_copyFailure_clicked() const
+void IsMonthly::on_copyFailure_clicked() const
 {
     QGuiApplication::clipboard()->setText(ui->txtFailure->toPlainText());
 }
 
-void Widget::on_btnLogPath_clicked()
+void IsMonthly::on_btnLogPath_clicked()
 {
     QString path = QFileDialog::getSaveFileName(nullptr, QString(), ".");
     if (path != "") {
@@ -333,7 +334,7 @@ void Widget::on_btnLogPath_clicked()
     }
 }
 
-bool Widget::parseProxy(QString url) {
+bool IsMonthly::parseProxy(QString url) {
     QUrl proxyUrl(url);
     if (!proxyUrl.isValid()) {
         return false;
@@ -376,7 +377,7 @@ bool Widget::parseProxy(QString url) {
     return true;
 }
 
-void Widget::getQuota()
+void IsMonthly::getQuota()
 {
     qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
              << "query for quota...";
@@ -385,15 +386,17 @@ void Widget::getQuota()
              << "waiting for quota reply...";
 }
 
-void Widget::on_btnQuota_clicked()
+void IsMonthly::on_btnQuota_clicked()
 {
     getQuota();
 }
 
-void Widget::setQuota()
+void IsMonthly::setQuota()
 {
     QStringList lines = QString::fromUtf8(quotaReply->readAll()).split('\n');
     if (lines.count() > 3) { // check wheather return successfully
         ui->inpQuota->setText(lines[lines.count() - 3]);
     }
 }
+
+} // namespace isMonthly

@@ -19,11 +19,11 @@ VERSION = 2.6.0
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2021 BruceKangCN
 
 SOURCES += \
-    main.cpp \
-    widget.cpp
+    ismonthly.cpp \
+    main.cpp
 
 HEADERS += \
-    widget.h
+    ismonthly.h
 
 FORMS += \
     widget.ui

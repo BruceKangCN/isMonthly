@@ -1,4 +1,4 @@
-#include "widget.h"
+#include "ismonthly.h"
 
 #include <QApplication>
 #include <QTranslator>
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     }
     a.installTranslator(&translator);
 
-    Widget w;
+    isMonthly::IsMonthly w;
     w.show();
 
     return a.exec();

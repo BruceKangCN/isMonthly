@@ -1,5 +1,5 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef ISMONTHLY_H
+#define ISMONTHLY_H
 
 #include <QWidget>
 #include <QNetworkAccessManager>
@@ -20,13 +20,14 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
-class Widget : public QWidget
+namespace isMonthly {
+class IsMonthly : public QWidget
 {
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+    IsMonthly(QWidget *parent = nullptr);
+    ~IsMonthly();
 
     void keyPressEvent(QKeyEvent* ev);
     void generateFile(const QString& type) const;
@@ -86,4 +87,6 @@ private:
     QStringList notmonthly;
     QStringList failure;
 };
-#endif // WIDGET_H
+
+} // namespace isMonthly
+#endif // ISMONTHLY_H
