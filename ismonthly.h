@@ -23,6 +23,7 @@ namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
 namespace isMonthly {
+
 class IsMonthly : public QWidget
 {
     Q_OBJECT
@@ -35,7 +36,7 @@ public:
     void generateFile(const QString& type) const;
 
 protected:
-    void getInfo(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
+    void appendResult(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
     void setQuota(); // set quota info
 
     /*
@@ -67,7 +68,7 @@ private:
     /*
      * configuration
      */
-    QString baseUrl;
+    QString isMonthlyUrl;
     QString quotaUrl;
     QString serialCode;
     QNetworkProxy proxy;

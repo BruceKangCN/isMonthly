@@ -15,10 +15,11 @@
 #include <QRegularExpression>
 
 namespace isMonthly {
+
 IsMonthly::IsMonthly(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
-    , baseUrl("https://v2.mahuateng.cf/isMonthly/")
+    , isMonthlyUrl("https://v2.mahuateng.cf/isMonthly/")
     , quotaUrl("https://v2.mahuateng.cf/check_quota?serial_code=")
     , serialCode("00000-00000-00000-00000-00000")
     , monthly(QStringList())
@@ -44,27 +45,20 @@ IsMonthly::IsMonthly(QWidget *parent)
      * get settings from ini file
      */
     if (config->contains("url")) {
-        baseUrl = config->value("url").toString();
-        ui->inpUrl->setText(baseUrl);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find url: " << baseUrl;
+        isMonthlyUrl = config->value("url").toString();
+        isMonthlyController.setUrl(isMonthlyUrl);
+        ui->inpUrl->setText(isMonthlyUrl);
     }
     if (config->contains("quotaUrl")) {
         quotaUrl = config->value("quotaUrl").toString();
         ui->inpQuotaUrl->setText(quotaUrl);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find quotaUrl: " << quotaUrl;
     }
     if (config->contains("serialCode")) {
         serialCode = config->value("serialCode").toString();
         ui->inpSN->setText(serialCode);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find serialCode: " << serialCode;
     }
     if (config->contains("proxy")) {
         QString v = config->value("proxy").toString();
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find proxy: " << v;
         if (v == "no") {
             ui->radioNoProxy->setChecked(true);
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
@@ -74,7 +68,7 @@ IsMonthly::IsMonthly(QWidget *parent)
             QNetworkProxy::setApplicationProxy(proxy);
         } else {
             ui->radioSystemProxy->setChecked(true);
-            for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+            for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
                 if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
@@ -85,14 +79,12 @@ IsMonthly::IsMonthly(QWidget *parent)
     if (config->contains("language")) {
         const int language = config->value("language").toInt();
         ui->boxLanguage->setCurrentIndex(language);
-        qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-                 << "find language index: " << language;
     }
 
     /*
      * init connections
      */
-    connect(&isMonthlyController, &IsMonthlyController::queryFinished, this, &IsMonthly::getInfo);
+    connect(&isMonthlyController, &IsMonthlyController::queryFinished, this, &IsMonthly::appendResult);
     connect(quotaManager, &QNetworkAccessManager::finished, this, &IsMonthly::setQuota);
 
     getQuota(); // init quota info
@@ -119,45 +111,27 @@ void IsMonthly::on_pushButton_clicked()
     }
 }
 
-void IsMonthly::getInfo(QNetworkReply* reply)
+void IsMonthly::appendResult(QNetworkReply* reply)
 {
-    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-            << "get data.";
-    QString cid = reply->url().toString().split("/")[4];
-    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-             << "cid: " << cid;
-    QByteArray data = reply->readAll(); // get response data
-    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-             << "data: " << QString::fromUtf8(data);
-    QJsonDocument doc = QJsonDocument::fromJson(data); // convert response text to JSON object
-
-    /*
-     * set member variables
-     */
-    QJsonObject root = doc.object();
-    const double bitrate = root["bitrate"].toDouble();
-    const bool isMonthly = root["monthly"].toBool();
-    const bool success = root["success"].toBool();
-    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-             << "is monthly: " << isMonthly;
+    IsMonthlyResponse response = isMonthlyController.getResponse(reply);
 
     /*
      * append different types of QTreeWidget depends on query result
      */
-    if (success) {
-        if (isMonthly) {
-            monthly.append(cid);
+    if (response.success) {
+        if (response.isMonthly) {
+            monthly.append(response.cid);
             ui->txtMonthly->setText(monthly.join(','));
-            new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("月额视频：是"), QString("%1k").arg(bitrate)}));
+            new QTreeWidgetItem(ui->treeWidget, QStringList({response.cid, tr("月额视频：是"), QString("%1k").arg(response.bitrate)}));
         } else {
-            notmonthly.append(cid);
+            notmonthly.append(response.cid);
             ui->txtNotMonthly->setText(notmonthly.join(','));
-            new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("月额视频：否"), QString("%1k").arg(bitrate)}));
+            new QTreeWidgetItem(ui->treeWidget, QStringList({response.cid, tr("月额视频：否"), QString("%1k").arg(response.bitrate)}));
         }
     } else {
-        failure.append(cid);
+        failure.append(response.cid);
         ui->txtFailure->setText(failure.join(','));
-        new QTreeWidgetItem(ui->treeWidget, QStringList({cid, tr("查询失败")}));
+        new QTreeWidgetItem(ui->treeWidget, QStringList({response.cid, tr("查询失败")}));
     }
 }
 
@@ -176,7 +150,6 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
      */
     if (ev->key() == Qt::Key_Delete)
     {
-        qDebug() << "delete!";
         QList<QTreeWidgetItem*> items = ui->treeWidget->selectedItems();
         QTreeWidgetItem* p = nullptr;
 
@@ -184,8 +157,6 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
             for (QTreeWidgetItem* item : items) {
                 p = item->parent();
                 if (p == nullptr) {
-                    qDebug() << "remove no-parent item";
-
                     QString content = item->data(0, Qt::DisplayRole).toString();
                     QString type = item->data(1, Qt::DisplayRole).toString();
 
@@ -204,7 +175,6 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
 
                     delete item;
                 } else {
-                    qDebug() << "remove child item";
                     p->removeChild(item);
                     delete item;
                 }
@@ -234,12 +204,12 @@ QString IsMonthly::getFailure() const
  */
 void IsMonthly::on_btnApply_clicked()
 {
-    baseUrl = ui->inpUrl->text();
+    isMonthlyUrl = ui->inpUrl->text();
     quotaUrl = ui->inpQuotaUrl->text();
     serialCode = ui->inpSN->text();
     const int language = ui->boxLanguage->currentIndex();
 
-    config->setValue("url", baseUrl);
+    config->setValue("url", isMonthlyUrl);
     config->setValue("quotaUrs", quotaUrl);
     config->setValue("serialCode", serialCode);
     config->setValue("language", language);
@@ -252,7 +222,7 @@ void IsMonthly::on_btnApply_clicked()
         config->setValue("proxy", "no");
     }
     if (ui->radioSystemProxy->isChecked()) {
-        for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+        for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
             if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                 QNetworkProxy::setApplicationProxy(p);
                 break;
@@ -266,7 +236,7 @@ void IsMonthly::on_btnApply_clicked()
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
         } else {
-            for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(baseUrl))) {
+            for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
                 if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
@@ -314,7 +284,6 @@ bool IsMonthly::parseProxy(QString url) {
 
     // validate host
     QString host = proxyUrl.host();
-    qDebug() << "host: " << host;
     if (host == "") {
         return false;
     }
@@ -322,7 +291,6 @@ bool IsMonthly::parseProxy(QString url) {
 
     // validate port
     int port = proxyUrl.port();
-    qDebug() << "port: " << port;
     if (port == -1) {
         return false;
     }

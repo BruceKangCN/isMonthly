@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 
 namespace isMonthly {
+
 IsMonthlyController::IsMonthlyController(QObject *parent)
     : QObject(parent)
     , replyId(0)
