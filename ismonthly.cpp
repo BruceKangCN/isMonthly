@@ -16,15 +16,7 @@ namespace isMonthly {
 IsMonthly::IsMonthly(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
-    , isMonthlyUrl("https://v2.mahuateng.cf/isMonthly/")
-    , quotaUrl("https://v2.mahuateng.cf/check_quota?serial_code=")
-    , serialCode("00000-00000-00000-00000-00000")
-    , monthly(QStringList())
-    , notmonthly(QStringList())
-    , failure(QStringList())
     , config(new QSettings("app.ini", QSettings::IniFormat))
-    , isMonthlyController(IsMonthlyController())
-    , quotaController(QuotaController())
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -32,9 +24,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     /*
      * check SSL compatibility, only for debug purpose
      */
-    qDebug() << QSslSocket::sslLibraryBuildVersionNumber();
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << QSslSocket::sslLibraryVersionNumber();
     qDebug() << QSslSocket::sslLibraryVersionString();
     qDebug() << QSslSocket::supportsSsl();
 
@@ -42,17 +32,17 @@ IsMonthly::IsMonthly(QWidget *parent)
      * get settings from ini file
      */
     if (config->contains("url")) {
-        isMonthlyUrl = config->value("url").toString();
+        const QString isMonthlyUrl = config->value("url").toString();
         isMonthlyController.setUrl(isMonthlyUrl);
         ui->inpUrl->setText(isMonthlyUrl);
     }
     if (config->contains("quotaUrl")) {
-        quotaUrl = config->value("quotaUrl").toString();
+        const QString quotaUrl = config->value("quotaUrl").toString();
         quotaController.setUrl(quotaUrl);
         ui->inpQuotaUrl->setText(quotaUrl);
     }
     if (config->contains("serialCode")) {
-        serialCode = config->value("serialCode").toString();
+        const QString serialCode = config->value("serialCode").toString();
         quotaController.setSerialCode(serialCode);
         ui->inpSN->setText(serialCode);
     }
@@ -67,8 +57,13 @@ IsMonthly::IsMonthly(QWidget *parent)
             QNetworkProxy::setApplicationProxy(proxy);
         } else {
             ui->radioSystemProxy->setChecked(true);
-            for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
-                if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
+            for (QNetworkProxy& p
+                : QNetworkProxyFactory::systemProxyForQuery(
+                    QNetworkProxyQuery(config->value("url").toString())
+                    )
+                ) {
+                if (p.type() == QNetworkProxy::HttpProxy
+                ||  p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
                 }
@@ -101,7 +96,6 @@ IsMonthly::~IsMonthly()
 void IsMonthly::on_pushButton_clicked()
 {
     QStringList ids = ui->lineEdit->text().split(QRegularExpression("\\s*,\\s*"));
-
     for (QString& id : ids) {
         isMonthlyController.query(id);
     }
@@ -200,13 +194,13 @@ QString IsMonthly::getFailure() const
  */
 void IsMonthly::on_btnApply_clicked()
 {
-    isMonthlyUrl = ui->inpUrl->text();
+    const QString isMonthlyUrl = ui->inpUrl->text();
     isMonthlyController.setUrl(isMonthlyUrl);
 
-    quotaUrl = ui->inpQuotaUrl->text();
+    const QString quotaUrl = ui->inpQuotaUrl->text();
     quotaController.setUrl(quotaUrl);
 
-    serialCode = ui->inpSN->text();
+    const QString serialCode = ui->inpSN->text();
     quotaController.setSerialCode(serialCode);
 
     const int language = ui->boxLanguage->currentIndex();

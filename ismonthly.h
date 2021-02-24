@@ -58,11 +58,8 @@ private:
 
     QSettings* config;
     /*
-     * configuration
+     * settings
      */
-    QString isMonthlyUrl;
-    QString quotaUrl;
-    QString serialCode;
     QNetworkProxy proxy;
 
     // access data
