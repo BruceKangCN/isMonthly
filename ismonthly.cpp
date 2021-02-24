@@ -97,7 +97,8 @@ IsMonthly::~IsMonthly()
  */
 void IsMonthly::on_pushButton_clicked()
 {
-    QStringList ids = ui->lineEdit->text().split(QRegularExpression("\\s*,\\s*"));
+    QRegularExpression seprator("\\s*,\\s*");
+    QStringList ids = ui->lineEdit->text().split(seprator);
     for (QString& id : ids) {
         isMonthlyController.query(id);
     }
