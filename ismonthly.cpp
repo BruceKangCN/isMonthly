@@ -1,15 +1,12 @@
 #include "ismonthly.h"
 #include "ui_widget.h"
 
-#include <QtDebug>
-#include <QDateTime>
-#include <QFile>
+#include <QDebug>
 #include <QClipboard>
 #include <QDir>
 #include <QFileDialog>
 #include <QList>
 #include <QNetworkProxy>
-#include <QUrl>
 #include <QNetworkProxyQuery>
 #include <QNetworkProxyFactory>
 #include <QRegularExpression>
@@ -27,7 +24,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     , failure(QStringList())
     , config(new QSettings("app.ini", QSettings::IniFormat))
     , isMonthlyController(IsMonthlyController())
-    , quotaManager(new QNetworkAccessManager(this))
+    , quotaController(QuotaController())
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -51,10 +48,12 @@ IsMonthly::IsMonthly(QWidget *parent)
     }
     if (config->contains("quotaUrl")) {
         quotaUrl = config->value("quotaUrl").toString();
+        quotaController.setUrl(quotaUrl);
         ui->inpQuotaUrl->setText(quotaUrl);
     }
     if (config->contains("serialCode")) {
         serialCode = config->value("serialCode").toString();
+        quotaController.setSerialCode(serialCode);
         ui->inpSN->setText(serialCode);
     }
     if (config->contains("proxy")) {
@@ -85,14 +84,11 @@ IsMonthly::IsMonthly(QWidget *parent)
      * init connections
      */
     connect(&isMonthlyController, &IsMonthlyController::queryFinished, this, &IsMonthly::appendResult);
-    connect(quotaManager, &QNetworkAccessManager::finished, this, &IsMonthly::setQuota);
-
-    getQuota(); // init quota info
+    connect(&quotaController, &QuotaController::queryFinished, this, &IsMonthly::setQuota);
 }
 
 IsMonthly::~IsMonthly()
 {
-    delete quotaManager;
     delete config;
 
     delete ui;
@@ -205,8 +201,14 @@ QString IsMonthly::getFailure() const
 void IsMonthly::on_btnApply_clicked()
 {
     isMonthlyUrl = ui->inpUrl->text();
+    isMonthlyController.setUrl(isMonthlyUrl);
+
     quotaUrl = ui->inpQuotaUrl->text();
+    quotaController.setUrl(quotaUrl);
+
     serialCode = ui->inpSN->text();
+    quotaController.setSerialCode(serialCode);
+
     const int language = ui->boxLanguage->currentIndex();
 
     config->setValue("url", isMonthlyUrl);
@@ -222,7 +224,7 @@ void IsMonthly::on_btnApply_clicked()
         config->setValue("proxy", "no");
     }
     if (ui->radioSystemProxy->isChecked()) {
-        for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
+        for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
             if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                 QNetworkProxy::setApplicationProxy(p);
                 break;
@@ -236,7 +238,7 @@ void IsMonthly::on_btnApply_clicked()
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
         } else {
-            for (QNetworkProxy p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
+            for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
                 if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
@@ -308,26 +310,15 @@ bool IsMonthly::parseProxy(QString url) {
     return true;
 }
 
-void IsMonthly::getQuota()
-{
-    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-             << "query for quota...";
-    quotaReply = quotaManager->get(QNetworkRequest(quotaUrl + serialCode));
-    qDebug() << QDateTime::currentDateTime().toString("[hh:mm:ss:zzz]") << "[debug]" << __FILE__ << __LINE__ << Q_FUNC_INFO
-             << "waiting for quota reply...";
-}
-
 void IsMonthly::on_btnQuota_clicked()
 {
-    getQuota();
+    quotaController.query();
 }
 
-void IsMonthly::setQuota()
+void IsMonthly::setQuota(QNetworkReply* reply)
 {
-    QStringList lines = QString::fromUtf8(quotaReply->readAll()).split('\n');
-    if (lines.count() > 3) { // check wheather return successfully
-        ui->inpQuota->setText(lines[lines.count() - 3]);
-    }
+    QString response = QString::fromUtf8(reply->readAll());
+    ui->inpQuota->setText(quotaController.getQuota(response));
 }
 
 } // namespace isMonthly

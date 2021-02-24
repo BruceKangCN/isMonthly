@@ -21,11 +21,13 @@ QMAKE_TARGET_COPYRIGHT = Copyright (c) 2021 BruceKangCN
 SOURCES += \
     ismonthly.cpp \
     ismonthlycontroller.cpp \
-    main.cpp
+    main.cpp \
+    quotacontroller.cpp
 
 HEADERS += \
     ismonthly.h \
-    ismonthlycontroller.h
+    ismonthlycontroller.h \
+    quotacontroller.h
 
 FORMS += \
     widget.ui

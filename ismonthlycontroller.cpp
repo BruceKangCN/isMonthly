@@ -20,18 +20,18 @@ IsMonthlyController::~IsMonthlyController()
     delete isMonthlyManager;
 }
 
-void IsMonthlyController::setUrl(const QString url)
+void IsMonthlyController::setUrl(const QString& url)
 {
     this->isMonthlyUrl = url;
 }
 
-void IsMonthlyController::query(const QString cid)
+void IsMonthlyController::query(const QString& cid)
 {
     QNetworkRequest request(isMonthlyUrl + cid);
     isMonthlyManager->get(request);
 }
 
-IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
+const IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
 {
     IsMonthlyResponse response = IsMonthlyResponse();
     response.replyId = this->replyId++;

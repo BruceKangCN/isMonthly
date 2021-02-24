@@ -23,9 +23,9 @@ public:
     explicit IsMonthlyController(QObject *parent = nullptr);
     ~IsMonthlyController();
 
-    void setUrl(const QString url);
-    void query(const QString cid);
-    IsMonthlyResponse getResponse(QNetworkReply* reply);
+    void setUrl(const QString& url);
+    void query(const QString& cid);
+    const IsMonthlyResponse getResponse(QNetworkReply* reply);
 
 signals:
     void queryFinished(QNetworkReply* reply);

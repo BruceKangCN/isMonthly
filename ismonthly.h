@@ -2,17 +2,10 @@
 #define ISMONTHLY_H
 
 #include "ismonthlycontroller.h"
+#include "quotacontroller.h"
 
 #include <QWidget>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QByteArray>
-#include <QString>
 #include <QUrl>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QEvent>
 #include <QKeyEvent>
 #include <QTreeWidget>
 #include <QSettings>
@@ -37,7 +30,7 @@ public:
 
 protected:
     void appendResult(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
-    void setQuota(); // set quota info
+    void setQuota(QNetworkReply* reply); // set quota info
 
     /*
      * concat QStrings with ','
@@ -58,7 +51,6 @@ private slots:
     void on_copyNotMonthly_clicked() const;
     void on_copyFailure_clicked() const;
 
-    void getQuota(); // get quota info
     void on_btnQuota_clicked();
 
 private:
@@ -73,14 +65,9 @@ private:
     QString serialCode;
     QNetworkProxy proxy;
 
-    /*
-     * for resolving network requests
-     */
-    QNetworkAccessManager* quotaManager;
-    QNetworkReply *quotaReply;
-
     // access data
     IsMonthlyController isMonthlyController;
+    QuotaController quotaController;
 
     /*
      * to store ids
