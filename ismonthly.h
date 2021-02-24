@@ -34,26 +34,12 @@ protected:
     void appendResult(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
     void setQuota(QNetworkReply* reply); // set quota info
 
-    /*
-     * concat QStrings with ','
-     */
-    QString getMonthly() const;
-    QString getNotMonthly() const;
-    QString getFailure() const;
-    bool parseProxy(QString url);
+    bool parseProxy(QString url); // parse string to proxy
 
 private slots:
     void on_pushButton_clicked(); // start query
     void on_btnApply_clicked(); // apply settings
-
-    /*
-     * copy ids to clipboard
-     */
-    void on_copyMonthly_clicked() const;
-    void on_copyNotMonthly_clicked() const;
-    void on_copyFailure_clicked() const;
-
-    void on_btnQuota_clicked();
+    void on_btnQuota_clicked(); // query for quota
 
 private:
     Ui::Widget* ui;
@@ -70,13 +56,6 @@ private:
 
     // model for data from IsMonthlyController
     QStandardItemModel* isMonthlyModel;
-
-    /*
-     * to store ids
-     */
-    QStringList monthly;
-    QStringList notmonthly;
-    QStringList failure;
 };
 
 } // namespace isMonthly

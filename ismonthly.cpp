@@ -160,21 +160,6 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
     }
 }
 
-QString IsMonthly::getMonthly() const
-{
-    return monthly.join(',');
-}
-
-QString IsMonthly::getNotMonthly() const
-{
-    return notmonthly.join(',');
-}
-
-QString IsMonthly::getFailure() const
-{
-    return failure.join(',');
-}
-
 /*
  * apply settings
  * also overwrite app.ini
@@ -223,21 +208,6 @@ void IsMonthly::on_btnApply_clicked()
     }
 
     config->sync();
-}
-
-void IsMonthly::on_copyMonthly_clicked() const
-{
-    QGuiApplication::clipboard()->setText(ui->txtMonthly->toPlainText());
-}
-
-void IsMonthly::on_copyNotMonthly_clicked() const
-{
-    QGuiApplication::clipboard()->setText(ui->txtNotMonthly->toPlainText());
-}
-
-void IsMonthly::on_copyFailure_clicked() const
-{
-    QGuiApplication::clipboard()->setText(ui->txtFailure->toPlainText());
 }
 
 bool IsMonthly::parseProxy(QString url) {
