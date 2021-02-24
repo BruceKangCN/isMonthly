@@ -7,7 +7,9 @@
 #include <QWidget>
 #include <QUrl>
 #include <QKeyEvent>
-#include <QTreeWidget>
+#include <QTableView>
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include <QSettings>
 #include <QNetworkProxy>
 
@@ -65,6 +67,9 @@ private:
     // access data
     IsMonthlyController isMonthlyController;
     QuotaController quotaController;
+
+    // model for data from IsMonthlyController
+    QStandardItemModel* isMonthlyModel;
 
     /*
      * to store ids

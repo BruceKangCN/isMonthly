@@ -88,36 +88,27 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="5">
-        <widget class="QTreeWidget" name="treeWidget">
-         <property name="lineWidth">
-          <number>1</number>
-         </property>
-         <property name="columnCount">
-          <number>3</number>
-         </property>
-         <column>
-          <property name="text">
-           <string>id</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>结果</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>码率</string>
-          </property>
-         </column>
-        </widget>
-       </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>额度</string>
          </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="5">
+        <widget class="QTableView" name="tableView">
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>80</number>
+         </attribute>
         </widget>
        </item>
       </layout>

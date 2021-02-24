@@ -17,6 +17,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
     , config(new QSettings("app.ini", QSettings::IniFormat))
+    , isMonthlyModel(new QStandardItemModel(0, 4))
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -27,6 +28,10 @@ IsMonthly::IsMonthly(QWidget *parent)
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
     qDebug() << QSslSocket::sslLibraryVersionString();
     qDebug() << QSslSocket::supportsSsl();
+
+    isMonthlyModel->setHorizontalHeaderLabels({"#", "id", tr("结果"), tr("码率")});
+    ui->tableView->setModel(isMonthlyModel);
+    ui->tableView->verticalHeader()->hide();
 
     /*
      * get settings from ini file
@@ -77,7 +82,6 @@ IsMonthly::IsMonthly(QWidget *parent)
 IsMonthly::~IsMonthly()
 {
     delete config;
-
     delete ui;
 }
 
@@ -98,71 +102,61 @@ void IsMonthly::appendResult(QNetworkReply* reply)
 {
     IsMonthlyResponse response = isMonthlyController.getResponse(reply);
 
-    /*
-     * append different types of QTreeWidget depends on query result
-     */
+    QStandardItem* idItem = new QStandardItem();
+    idItem->setData(response.replyId + 1, Qt::DisplayRole); // # starts from 1
+    QStandardItem* cidItem = new QStandardItem();
+    cidItem->setData(response.cid, Qt::DisplayRole);
+    QStandardItem* bitrateItem = new QStandardItem();
+    bitrateItem->setData(response.bitrate, Qt::DisplayRole);
+
+    QStandardItem* isMonthlyItem = new QStandardItem();
     if (response.success) {
         if (response.isMonthly) {
-            monthly.append(response.cid);
-            ui->txtMonthly->setText(monthly.join(','));
-            new QTreeWidgetItem(ui->treeWidget, QStringList({response.cid, tr("月额视频：是"), QString("%1k").arg(response.bitrate)}));
+            isMonthlyItem->setData(tr("月额：是"), Qt::DisplayRole);
         } else {
-            notmonthly.append(response.cid);
-            ui->txtNotMonthly->setText(notmonthly.join(','));
-            new QTreeWidgetItem(ui->treeWidget, QStringList({response.cid, tr("月额视频：否"), QString("%1k").arg(response.bitrate)}));
+            isMonthlyItem->setData(tr("月额：否"), Qt::DisplayRole);
         }
     } else {
-        failure.append(response.cid);
-        ui->txtFailure->setText(failure.join(','));
-        new QTreeWidgetItem(ui->treeWidget, QStringList({response.cid, tr("查询失败")}));
+        isMonthlyItem->setData(tr("查询失败"), Qt::DisplayRole);
     }
+
+    isMonthlyModel->appendRow({idItem, cidItem, isMonthlyItem, bitrateItem});
 }
 
 void IsMonthly::keyPressEvent(QKeyEvent* ev)
 {
-    /*
-     * execute query when enter or return is pressed
-     */
+    // execute query when enter or return is pressed
     if (ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return)
     {
         on_pushButton_clicked();
     }
-    /*
-     * delete selected widgets when delete is pressed
-     * also change associated QStringList
-     */
+
+    // delete selected items when delete is pressed
     if (ev->key() == Qt::Key_Delete)
     {
-        QList<QTreeWidgetItem*> items = ui->treeWidget->selectedItems();
-        QTreeWidgetItem* p = nullptr;
-
-        if (!items.isEmpty()) {
-            for (QTreeWidgetItem* item : items) {
-                p = item->parent();
-                if (p == nullptr) {
-                    QString content = item->data(0, Qt::DisplayRole).toString();
-                    QString type = item->data(1, Qt::DisplayRole).toString();
-
-                    if (type == tr("月额视频：是")) {
-                        monthly.removeAt(monthly.indexOf(content));
-                        ui->txtMonthly->setText(monthly.join(','));
-                    }
-                    if (type == tr("月额视频：否")) {
-                        notmonthly.removeAt(notmonthly.indexOf(content));
-                        ui->txtNotMonthly->setText(notmonthly.join(','));
-                    }
-                    if (type == tr("查询失败")) {
-                        failure.removeAt(failure.indexOf(content));
-                        ui->txtFailure->setText(failure.join(','));
-                    }
-
-                    delete item;
-                } else {
-                    p->removeChild(item);
-                    delete item;
-                }
+        auto selectedRows = ui->tableView->selectionModel()->selectedRows();
+        quint64 count = 0;
+        for (auto& index : selectedRows) {
+            /*
+             * row number will be changed after takeRow
+             * so minus the number of taken rows
+             * and then add the count
+             */
+            auto items = isMonthlyModel->takeRow(index.row() - count++);
+            for (auto* item : items) {
+                delete item;
             }
         }
+    }
+
+    // copy cids when copy sequence is pressed
+    if (ev->matches(QKeySequence::Copy)) {
+        auto selectedRows = ui->tableView->selectionModel()->selectedRows(1);
+        QStringList selected = QStringList();
+        for (auto& index : selectedRows) {
+            selected.append(isMonthlyModel->data(index).toString());
+        }
+        QGuiApplication::clipboard()->setText(selected.join(','));
     }
 }
 
