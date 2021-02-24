@@ -78,8 +78,10 @@ IsMonthly::IsMonthly(QWidget *parent)
     /*
      * init connections
      */
-    connect(&isMonthlyController, &IsMonthlyController::queryFinished, this, &IsMonthly::appendResult);
-    connect(&quotaController, &QuotaController::queryFinished, this, &IsMonthly::setQuota);
+    connect(&isMonthlyController, &IsMonthlyController::queryFinished,
+        this, &IsMonthly::appendResult);
+    connect(&quotaController, &QuotaController::queryFinished,
+        this, &IsMonthly::setQuota);
 }
 
 IsMonthly::~IsMonthly()
@@ -218,8 +220,13 @@ void IsMonthly::on_btnApply_clicked()
         config->setValue("proxy", "no");
     }
     if (ui->radioSystemProxy->isChecked()) {
-        for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
-            if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
+        for (QNetworkProxy& p
+            : QNetworkProxyFactory::systemProxyForQuery(
+                QNetworkProxyQuery(isMonthlyUrl)
+                )
+            ) {
+            if (p.type() == QNetworkProxy::HttpProxy
+            ||  p.type() == QNetworkProxy::Socks5Proxy) {
                 QNetworkProxy::setApplicationProxy(p);
                 break;
             }
@@ -232,8 +239,13 @@ void IsMonthly::on_btnApply_clicked()
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
         } else {
-            for (QNetworkProxy& p : QNetworkProxyFactory::systemProxyForQuery(QNetworkProxyQuery(isMonthlyUrl))) {
-                if (p.type() == QNetworkProxy::HttpProxy || p.type() == QNetworkProxy::Socks5Proxy) {
+            for (QNetworkProxy& p
+                : QNetworkProxyFactory::systemProxyForQuery(
+                    QNetworkProxyQuery(isMonthlyUrl)
+                    )
+                ) {
+                if (p.type() == QNetworkProxy::HttpProxy
+                ||  p.type() == QNetworkProxy::Socks5Proxy) {
                     QNetworkProxy::setApplicationProxy(p);
                     break;
                 }
