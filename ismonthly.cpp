@@ -57,17 +57,7 @@ IsMonthly::IsMonthly(QWidget *parent)
             QNetworkProxy::setApplicationProxy(proxy);
         } else {
             ui->radioSystemProxy->setChecked(true);
-            for (QNetworkProxy& p
-                : QNetworkProxyFactory::systemProxyForQuery(
-                    QNetworkProxyQuery(config->value("url").toString())
-                    )
-                ) {
-                if (p.type() == QNetworkProxy::HttpProxy
-                ||  p.type() == QNetworkProxy::Socks5Proxy) {
-                    QNetworkProxy::setApplicationProxy(p);
-                    break;
-                }
-            }
+            QNetworkProxyFactory::setUseSystemConfiguration(true);
         }
     }
     if (config->contains("language")) {
@@ -221,17 +211,7 @@ void IsMonthly::on_btnApply_clicked()
         config->setValue("proxy", "no");
     }
     if (ui->radioSystemProxy->isChecked()) {
-        for (QNetworkProxy& p
-            : QNetworkProxyFactory::systemProxyForQuery(
-                QNetworkProxyQuery(isMonthlyUrl)
-                )
-            ) {
-            if (p.type() == QNetworkProxy::HttpProxy
-            ||  p.type() == QNetworkProxy::Socks5Proxy) {
-                QNetworkProxy::setApplicationProxy(p);
-                break;
-            }
-        }
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
         config->setValue("proxy", "system");
     }
     if (ui->radioCustom->isChecked()) {
@@ -240,17 +220,7 @@ void IsMonthly::on_btnApply_clicked()
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
         } else {
-            for (QNetworkProxy& p
-                : QNetworkProxyFactory::systemProxyForQuery(
-                    QNetworkProxyQuery(isMonthlyUrl)
-                    )
-                ) {
-                if (p.type() == QNetworkProxy::HttpProxy
-                ||  p.type() == QNetworkProxy::Socks5Proxy) {
-                    QNetworkProxy::setApplicationProxy(p);
-                    break;
-                }
-            }
+            QNetworkProxyFactory::setUseSystemConfiguration(true);
             ui->radioCustom->setChecked(false);
             ui->radioSystemProxy->setChecked(true);
             ui->inpProxy->setText(proxyUrl + "[" + tr("解析出错") + "]");
