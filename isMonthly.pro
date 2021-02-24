@@ -47,5 +47,4 @@ TRANSLATIONS = languages/isMonthly_en.ts
 DISTFILES += \
     .gitignore \
     LICENSE \
-    README.md \
-    app.ini
+    README.md
