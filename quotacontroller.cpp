@@ -42,6 +42,7 @@ const QString QuotaController::getQuota(const QString& response) const
 
 const QString QuotaController::parseQuota(const QString& content) const
 {
+    // this depends on the response format
     QRegularExpression quotaRegex("总计可用\\s*(\\d+\\s*/\\s*\\d+)");
     QRegularExpressionMatch match = quotaRegex.match(content);
     if (match.lastCapturedIndex() > 0) {
