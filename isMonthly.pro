@@ -15,15 +15,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-VERSION = 2.6.0
+VERSION = 3.0.1
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2021 BruceKangCN
 
 SOURCES += \
+    ismonthly.cpp \
+    ismonthlycontroller.cpp \
     main.cpp \
-    widget.cpp
+    quotacontroller.cpp
 
 HEADERS += \
-    widget.h
+    ismonthly.h \
+    ismonthlycontroller.h \
+    quotacontroller.h
 
 FORMS += \
     widget.ui
@@ -43,5 +47,4 @@ TRANSLATIONS = languages/isMonthly_en.ts
 DISTFILES += \
     .gitignore \
     LICENSE \
-    README.md \
-    app.ini
+    README.md
