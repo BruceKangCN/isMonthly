@@ -83,6 +83,7 @@ IsMonthly::~IsMonthly()
 {
     delete config;
     delete ui;
+    delete isMonthlyModel;
 }
 
 /*
