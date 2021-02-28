@@ -17,7 +17,7 @@ IsMonthlyController::IsMonthlyController(QObject *parent)
 
 IsMonthlyController::~IsMonthlyController()
 {
-    delete isMonthlyManager;
+
 }
 
 void IsMonthlyController::setUrl(const QString& url)

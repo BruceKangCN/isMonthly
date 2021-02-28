@@ -16,8 +16,8 @@ namespace isMonthly {
 IsMonthly::IsMonthly(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
-    , config(new QSettings("app.ini", QSettings::IniFormat))
-    , isMonthlyModel(new QStandardItemModel(0, 4))
+    , config(new QSettings("app.ini", QSettings::IniFormat, this))
+    , isMonthlyModel(new QStandardItemModel(0, 4, this))
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -81,9 +81,7 @@ IsMonthly::IsMonthly(QWidget *parent)
 
 IsMonthly::~IsMonthly()
 {
-    delete config;
     delete ui;
-    delete isMonthlyModel;
 }
 
 /*

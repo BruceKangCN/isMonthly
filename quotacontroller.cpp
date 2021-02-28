@@ -16,7 +16,7 @@ QuotaController::QuotaController(QObject *parent)
 
 QuotaController::~QuotaController()
 {
-    delete quotaManager;
+
 }
 
 void QuotaController::setUrl(const QString url)
