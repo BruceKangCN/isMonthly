@@ -37,13 +37,12 @@ public:
 protected:
     void appendResult(QNetworkReply* reply); // append a parsed result to the model
     void setQuota(QNetworkReply* reply); // set quota info
-
     bool parseProxy(QString url); // parse string to proxy
 
 private slots:
-    void on_pushButton_clicked(); // start query
-    void on_btnApply_clicked(); // apply settings
-    void on_btnQuota_clicked(); // query for quota
+    void on_pushButton_clicked();
+    void on_btnApply_clicked();
+    void on_btnQuota_clicked();
 
 private:
     Ui::Widget* ui;
