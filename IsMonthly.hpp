@@ -1,8 +1,8 @@
 #ifndef ISMONTHLY_H
 #define ISMONTHLY_H
 
-#include "ismonthlycontroller.h"
-#include "quotacontroller.h"
+#include "IsMonthlyController.hpp"
+#include "QuotaController.hpp"
 
 #include <QWidget>
 #include <QUrl>

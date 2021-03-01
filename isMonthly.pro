@@ -19,15 +19,15 @@ VERSION = 3.0.1
 QMAKE_TARGET_COPYRIGHT = Copyright (c) 2021 BruceKangCN
 
 SOURCES += \
-    ismonthly.cpp \
-    ismonthlycontroller.cpp \
-    main.cpp \
-    quotacontroller.cpp
+    IsMonthly.cpp \
+    IsMonthlyController.cpp \
+    QuotaController.cpp \
+    main.cpp
 
 HEADERS += \
-    ismonthly.h \
-    ismonthlycontroller.h \
-    quotacontroller.h
+    IsMonthly.hpp \
+    IsMonthlyController.hpp \
+    QuotaController.hpp
 
 FORMS += \
     widget.ui

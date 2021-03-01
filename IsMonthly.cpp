@@ -1,4 +1,4 @@
-#include "ismonthly.h"
+#include "IsMonthly.hpp"
 #include "ui_widget.h"
 
 #include <QDebug>
@@ -255,7 +255,7 @@ void IsMonthly::on_btnQuota_clicked()
     quotaController.query();
 }
 
-void IsMonthly::setQuota(QNetworkReply* reply)
+inline void IsMonthly::setQuota(QNetworkReply* reply)
 {
     QString response = QString::fromUtf8(reply->readAll());
     ui->inpQuota->setText(quotaController.getQuota(response));

@@ -159,22 +159,22 @@
         <translation>bitrate</translation>
     </message>
     <message>
-        <location filename="../ismonthly.cpp" line="115"/>
+        <location filename="../ismonthly.cpp" line="114"/>
         <source>月额：是</source>
         <translation>monthly: true</translation>
     </message>
     <message>
-        <location filename="../ismonthly.cpp" line="117"/>
+        <location filename="../ismonthly.cpp" line="116"/>
         <source>月额：否</source>
         <translation>monthly: false</translation>
     </message>
     <message>
-        <location filename="../ismonthly.cpp" line="120"/>
+        <location filename="../ismonthly.cpp" line="119"/>
         <source>查询失败</source>
         <translation>query failed</translation>
     </message>
     <message>
-        <location filename="../ismonthly.cpp" line="205"/>
+        <location filename="../ismonthly.cpp" line="204"/>
         <source>解析出错</source>
         <translation>failed to parse</translation>
     </message>

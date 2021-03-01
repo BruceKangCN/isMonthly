@@ -1,4 +1,4 @@
-#include "quotacontroller.h"
+#include "QuotaController.hpp"
 
 #include <QRegularExpression>
 
@@ -48,7 +48,7 @@ const QString QuotaController::parseQuota(const QString& content) const
     if (match.lastCapturedIndex() > 0) {
         return match.captured(1);
     }
-    return "?/?";
+    return QString("?/?");
 }
 
 } // namespace isMonthly
