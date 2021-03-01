@@ -29,7 +29,7 @@ void QuotaController::setSerialCode(const QString serialCode)
     this->serialCode = serialCode;
 }
 
-void QuotaController::query()
+void QuotaController::query() const
 {
     QNetworkRequest request(quotaUrl + serialCode);
     quotaManager->get(request);
