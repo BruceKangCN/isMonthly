@@ -1,7 +1,6 @@
 #include "IsMonthly.hpp"
 #include "ui_widget.h"
 
-#include <QDebug>
 #include <QClipboard>
 #include <QDir>
 #include <QFileDialog>
@@ -21,13 +20,6 @@ IsMonthly::IsMonthly(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
-
-    /*
-     * check SSL compatibility, only for debug purpose
-     */
-    qDebug() << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << QSslSocket::sslLibraryVersionString();
-    qDebug() << QSslSocket::supportsSsl();
 
     isMonthlyModel->setHorizontalHeaderLabels({"#", "id", tr("结果"), tr("码率")});
     ui->tableView->setModel(isMonthlyModel);
@@ -81,10 +73,20 @@ IsMonthly::IsMonthly(QWidget *parent)
         this, &IsMonthly::appendResult);
     connect(&quotaController, &QuotaController::queryFinished,
         this, &IsMonthly::setQuota);
+
+    log_wrapper_init("isMonthly.log");
+
+    /*
+     * check SSL compatibility, only for debug purpose
+     */
+    logger.debug() << "build with: " << QSslSocket::sslLibraryBuildVersionString();
+    logger.debug() << "SSL lib version: " << QSslSocket::sslLibraryVersionString();
+    logger.debug() << "support SSL: " << QSslSocket::supportsSsl();
 }
 
 IsMonthly::~IsMonthly()
 {
+    log_wrapper_destroy();
     delete ui;
 }
 

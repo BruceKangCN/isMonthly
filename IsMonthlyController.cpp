@@ -1,4 +1,5 @@
 #include "IsMonthlyController.hpp"
+#include "LogWrapper.hpp"
 
 #include <QJsonDocument>
 

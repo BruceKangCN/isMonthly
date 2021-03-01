@@ -1,4 +1,5 @@
 #include "QuotaController.hpp"
+#include "LogWrapper.hpp"
 
 #include <QRegularExpression>
 
