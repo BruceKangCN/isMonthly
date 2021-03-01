@@ -31,7 +31,7 @@ public:
     void generateFile(const QString& type) const;
 
 protected:
-    void appendResult(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
+    void appendResult(QNetworkReply* reply); // append a parsed result to the model
     void setQuota(QNetworkReply* reply); // set quota info
 
     bool parseProxy(QString url); // parse string to proxy

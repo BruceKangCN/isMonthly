@@ -56,7 +56,7 @@ IsMonthly::IsMonthly(QWidget *parent)
         if (v == "no") {
             ui->radioNoProxy->setChecked(true);
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
-        } else if (parseProxy(v)) {
+        } else if (parseProxy(v)) { // if custom proxy parse succeed
             ui->radioCustom->setChecked(true);
             ui->inpProxy->setText(v);
             QNetworkProxy::setApplicationProxy(proxy);
@@ -97,6 +97,11 @@ void IsMonthly::on_pushButton_clicked()
     }
 }
 
+/*
+ * append a row to the IsMonthlyModel
+ * the row is based on the result parsed from the reply
+ * the parser is IsMonthlyController
+ */
 void IsMonthly::appendResult(QNetworkReply* reply)
 {
     IsMonthlyResponse response = isMonthlyController.getResponse(reply);
@@ -181,9 +186,7 @@ void IsMonthly::on_btnApply_clicked()
     config->setValue("serialCode", serialCode);
     config->setValue("language", language);
 
-    /*
-     * proxy settings
-     */
+    // proxy settings
     if (ui->radioNoProxy->isChecked()) {
         QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
         config->setValue("proxy", "no");
@@ -197,8 +200,14 @@ void IsMonthly::on_btnApply_clicked()
         if (parseProxy(proxyUrl)) {
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
-        } else {
+        } else { // if proxy parse failed
             QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+            /*
+             *  set the radio box status,
+             *  add parse failed hint,
+             *  change the "proxy" value in config
+             */
             ui->radioCustom->setChecked(false);
             ui->radioSystemProxy->setChecked(true);
             ui->inpProxy->setText(proxyUrl + "[" + tr("解析出错") + "]");
@@ -238,6 +247,9 @@ bool IsMonthly::parseProxy(QString url) {
     }
     proxy.setPort(port);
 
+    /*
+     * check if username and password is required
+     */
     QString userName = proxyUrl.userName();
     if (userName != "") {
         proxy.setUser(userName);
@@ -252,12 +264,22 @@ bool IsMonthly::parseProxy(QString url) {
 
 void IsMonthly::on_btnQuota_clicked()
 {
+    /*
+     * let the QuotaController start query
+     * when query is over, QuotaController::queryFinished is emitted
+     * then the result can be taken with QuotaController::getQuota
+     */
     quotaController.query();
 }
 
 inline void IsMonthly::setQuota(QNetworkReply* reply)
 {
+    // get the response content, then the quota can be parsed with getQuota
     QString response = QString::fromUtf8(reply->readAll());
+    /*
+     * let the QuotaController parse the response content
+     * and return a quota result QString
+     */
     ui->inpQuota->setText(quotaController.getQuota(response));
 }
 
