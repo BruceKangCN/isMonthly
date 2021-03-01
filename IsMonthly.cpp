@@ -35,6 +35,10 @@ IsMonthly::IsMonthly(QWidget *parent)
 
     /*
      * get settings from ini file
+     * if the key-value pair exists
+     * first read value from config
+     * then set the related property
+     * finally set the ui
      */
     if (config->contains("url")) {
         const QString isMonthlyUrl = config->value("url").toString();
@@ -104,15 +108,18 @@ void IsMonthly::on_pushButton_clicked()
  */
 void IsMonthly::appendResult(QNetworkReply* reply)
 {
-    IsMonthlyResponse response = isMonthlyController.getResponse(reply);
+    // get the result struct from return value
+    const IsMonthlyResponse& response = isMonthlyController.getResponse(reply);
 
+    // create simple items and set data based on result
     QStandardItem* idItem = new QStandardItem();
-    idItem->setData(response.replyId + 1, Qt::DisplayRole); // # starts from 1
+    idItem->setData(response.replyId + 1, Qt::DisplayRole); // # start from 1
     QStandardItem* cidItem = new QStandardItem();
     cidItem->setData(response.cid, Qt::DisplayRole);
     QStandardItem* bitrateItem = new QStandardItem();
     bitrateItem->setData(response.bitrate, Qt::DisplayRole);
 
+    // create IsMonthlyItem and set value based on success, isMonthly properties
     QStandardItem* isMonthlyItem = new QStandardItem();
     if (response.success) {
         if (response.isMonthly) {
@@ -124,6 +131,7 @@ void IsMonthly::appendResult(QNetworkReply* reply)
         isMonthlyItem->setData(tr("查询失败"), Qt::DisplayRole);
     }
 
+    // append a new row with the items to the IsMonthlyModel
     isMonthlyModel->appendRow({idItem, cidItem, isMonthlyItem, bitrateItem});
 }
 
@@ -218,13 +226,19 @@ void IsMonthly::on_btnApply_clicked()
     config->sync();
 }
 
+/*
+ * parse user defined proxy read from config file
+ * return true if parse successfully
+ * the result is stored in private member proxy
+ */
 bool IsMonthly::parseProxy(QString url) {
+    // convert QString to QUrl and validate
     QUrl proxyUrl(url);
     if (!proxyUrl.isValid()) {
         return false;
     }
 
-    // validate scheme
+    // validate scheme and set proxyType based on it
     if (proxyUrl.scheme() == "socks5") {
         proxy.setType(QNetworkProxy::Socks5Proxy);
     } else if (proxyUrl.scheme() == "http") {

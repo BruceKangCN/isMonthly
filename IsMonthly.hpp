@@ -19,6 +19,10 @@ QT_END_NAMESPACE
 
 namespace isMonthly {
 
+/*
+ * a class to interactive with the ui
+ * and handle the settings
+ */
 class IsMonthly : public QWidget
 {
     Q_OBJECT
@@ -44,13 +48,10 @@ private slots:
 private:
     Ui::Widget* ui;
 
-    QSettings* config;
-    /*
-     * settings
-     */
-    QNetworkProxy proxy;
+    QSettings* config; // app configuration
+    QNetworkProxy proxy; // to store result from parseProxy
 
-    // access data
+    // to access data
     IsMonthlyController isMonthlyController;
     QuotaController quotaController;
 
