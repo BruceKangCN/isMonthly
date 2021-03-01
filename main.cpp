@@ -1,4 +1,4 @@
-#include "ismonthly.h"
+#include "IsMonthly.hpp"
 
 #include <QApplication>
 #include <QTranslator>

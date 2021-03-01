@@ -1,8 +1,8 @@
 #ifndef ISMONTHLY_H
 #define ISMONTHLY_H
 
-#include "ismonthlycontroller.h"
-#include "quotacontroller.h"
+#include "IsMonthlyController.hpp"
+#include "QuotaController.hpp"
 
 #include <QWidget>
 #include <QUrl>
@@ -19,6 +19,10 @@ QT_END_NAMESPACE
 
 namespace isMonthly {
 
+/*
+ * a class to interactive with the ui
+ * and handle the settings
+ */
 class IsMonthly : public QWidget
 {
     Q_OBJECT
@@ -31,26 +35,22 @@ public:
     void generateFile(const QString& type) const;
 
 protected:
-    void appendResult(QNetworkReply* reply); // get query state, is monthly state, bitrate of a video
+    void appendResult(QNetworkReply* reply); // append a parsed result to the model
     void setQuota(QNetworkReply* reply); // set quota info
-
     bool parseProxy(QString url); // parse string to proxy
 
 private slots:
-    void on_pushButton_clicked(); // start query
-    void on_btnApply_clicked(); // apply settings
-    void on_btnQuota_clicked(); // query for quota
+    void on_pushButton_clicked();
+    void on_btnApply_clicked();
+    void on_btnQuota_clicked();
 
 private:
     Ui::Widget* ui;
 
-    QSettings* config;
-    /*
-     * settings
-     */
-    QNetworkProxy proxy;
+    QSettings* config; // app configuration
+    QNetworkProxy proxy; // to store result from parseProxy
 
-    // access data
+    // to access data
     IsMonthlyController isMonthlyController;
     QuotaController quotaController;
 

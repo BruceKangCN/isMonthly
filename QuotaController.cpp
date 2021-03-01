@@ -1,4 +1,4 @@
-#include "quotacontroller.h"
+#include "QuotaController.hpp"
 
 #include <QRegularExpression>
 
@@ -16,7 +16,7 @@ QuotaController::QuotaController(QObject *parent)
 
 QuotaController::~QuotaController()
 {
-    delete quotaManager;
+
 }
 
 void QuotaController::setUrl(const QString url)
@@ -29,7 +29,7 @@ void QuotaController::setSerialCode(const QString serialCode)
     this->serialCode = serialCode;
 }
 
-void QuotaController::query()
+void QuotaController::query() const
 {
     QNetworkRequest request(quotaUrl + serialCode);
     quotaManager->get(request);
@@ -48,7 +48,7 @@ const QString QuotaController::parseQuota(const QString& content) const
     if (match.lastCapturedIndex() > 0) {
         return match.captured(1);
     }
-    return "?/?";
+    return QString("?/?");
 }
 
 } // namespace isMonthly

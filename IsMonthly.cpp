@@ -1,4 +1,4 @@
-#include "ismonthly.h"
+#include "IsMonthly.hpp"
 #include "ui_widget.h"
 
 #include <QDebug>
@@ -16,8 +16,8 @@ namespace isMonthly {
 IsMonthly::IsMonthly(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
-    , config(new QSettings("app.ini", QSettings::IniFormat))
-    , isMonthlyModel(new QStandardItemModel(0, 4))
+    , config(new QSettings("app.ini", QSettings::IniFormat, this))
+    , isMonthlyModel(new QStandardItemModel(0, 4, this))
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -35,6 +35,10 @@ IsMonthly::IsMonthly(QWidget *parent)
 
     /*
      * get settings from ini file
+     * if the key-value pair exists
+     * first read value from config
+     * then set the related property
+     * finally set the ui
      */
     if (config->contains("url")) {
         const QString isMonthlyUrl = config->value("url").toString();
@@ -56,7 +60,7 @@ IsMonthly::IsMonthly(QWidget *parent)
         if (v == "no") {
             ui->radioNoProxy->setChecked(true);
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
-        } else if (parseProxy(v)) {
+        } else if (parseProxy(v)) { // if custom proxy parse succeed
             ui->radioCustom->setChecked(true);
             ui->inpProxy->setText(v);
             QNetworkProxy::setApplicationProxy(proxy);
@@ -81,9 +85,7 @@ IsMonthly::IsMonthly(QWidget *parent)
 
 IsMonthly::~IsMonthly()
 {
-    delete config;
     delete ui;
-    delete isMonthlyModel;
 }
 
 /*
@@ -99,17 +101,25 @@ void IsMonthly::on_pushButton_clicked()
     }
 }
 
+/*
+ * append a row to the IsMonthlyModel
+ * the row is based on the result parsed from the reply
+ * the parser is IsMonthlyController
+ */
 void IsMonthly::appendResult(QNetworkReply* reply)
 {
-    IsMonthlyResponse response = isMonthlyController.getResponse(reply);
+    // get the result struct from return value
+    const IsMonthlyResponse& response = isMonthlyController.getResponse(reply);
 
+    // create simple items and set data based on result
     QStandardItem* idItem = new QStandardItem();
-    idItem->setData(response.replyId + 1, Qt::DisplayRole); // # starts from 1
+    idItem->setData(response.replyId + 1, Qt::DisplayRole); // # start from 1
     QStandardItem* cidItem = new QStandardItem();
     cidItem->setData(response.cid, Qt::DisplayRole);
     QStandardItem* bitrateItem = new QStandardItem();
     bitrateItem->setData(response.bitrate, Qt::DisplayRole);
 
+    // create IsMonthlyItem and set value based on success, isMonthly properties
     QStandardItem* isMonthlyItem = new QStandardItem();
     if (response.success) {
         if (response.isMonthly) {
@@ -121,6 +131,7 @@ void IsMonthly::appendResult(QNetworkReply* reply)
         isMonthlyItem->setData(tr("查询失败"), Qt::DisplayRole);
     }
 
+    // append a new row with the items to the IsMonthlyModel
     isMonthlyModel->appendRow({idItem, cidItem, isMonthlyItem, bitrateItem});
 }
 
@@ -183,9 +194,7 @@ void IsMonthly::on_btnApply_clicked()
     config->setValue("serialCode", serialCode);
     config->setValue("language", language);
 
-    /*
-     * proxy settings
-     */
+    // proxy settings
     if (ui->radioNoProxy->isChecked()) {
         QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
         config->setValue("proxy", "no");
@@ -199,8 +208,14 @@ void IsMonthly::on_btnApply_clicked()
         if (parseProxy(proxyUrl)) {
             QNetworkProxy::setApplicationProxy(proxy);
             config->setValue("proxy", proxyUrl);
-        } else {
+        } else { // if proxy parse failed
             QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+            /*
+             *  set the radio box status,
+             *  add parse failed hint,
+             *  change the "proxy" value in config
+             */
             ui->radioCustom->setChecked(false);
             ui->radioSystemProxy->setChecked(true);
             ui->inpProxy->setText(proxyUrl + "[" + tr("解析出错") + "]");
@@ -211,13 +226,19 @@ void IsMonthly::on_btnApply_clicked()
     config->sync();
 }
 
+/*
+ * parse user defined proxy read from config file
+ * return true if parse successfully
+ * the result is stored in private member proxy
+ */
 bool IsMonthly::parseProxy(QString url) {
+    // convert QString to QUrl and validate
     QUrl proxyUrl(url);
     if (!proxyUrl.isValid()) {
         return false;
     }
 
-    // validate scheme
+    // validate scheme and set proxyType based on it
     if (proxyUrl.scheme() == "socks5") {
         proxy.setType(QNetworkProxy::Socks5Proxy);
     } else if (proxyUrl.scheme() == "http") {
@@ -240,6 +261,9 @@ bool IsMonthly::parseProxy(QString url) {
     }
     proxy.setPort(port);
 
+    /*
+     * check if username and password is required
+     */
     QString userName = proxyUrl.userName();
     if (userName != "") {
         proxy.setUser(userName);
@@ -254,12 +278,22 @@ bool IsMonthly::parseProxy(QString url) {
 
 void IsMonthly::on_btnQuota_clicked()
 {
+    /*
+     * let the QuotaController start query
+     * when query is over, QuotaController::queryFinished is emitted
+     * then the result can be taken with QuotaController::getQuota
+     */
     quotaController.query();
 }
 
-void IsMonthly::setQuota(QNetworkReply* reply)
+inline void IsMonthly::setQuota(QNetworkReply* reply)
 {
+    // get the response content, then the quota can be parsed with getQuota
     QString response = QString::fromUtf8(reply->readAll());
+    /*
+     * let the QuotaController parse the response content
+     * and return a quota result QString
+     */
     ui->inpQuota->setText(quotaController.getQuota(response));
 }
 

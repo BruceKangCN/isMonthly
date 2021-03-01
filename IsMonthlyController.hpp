@@ -8,6 +8,7 @@
 
 namespace isMonthly {
 
+// result struct returned from getResponse
 struct IsMonthlyResponse {
     quint64 replyId;
     QString cid;
@@ -16,6 +17,10 @@ struct IsMonthlyResponse {
     double bitrate;
 };
 
+/*
+ * a class to manage the network access for isMonthly infomation
+ * and parse the response from net
+ */
 class IsMonthlyController : public QObject
 {
     Q_OBJECT
@@ -23,17 +28,17 @@ public:
     explicit IsMonthlyController(QObject *parent = nullptr);
     ~IsMonthlyController();
 
-    void setUrl(const QString& url);
-    void query(const QString& cid);
-    const IsMonthlyResponse getResponse(QNetworkReply* reply);
+    void setUrl(const QString& url); // set query url
+    void query(const QString& cid) const; // start the query
+    const IsMonthlyResponse getResponse(QNetworkReply* reply); // return result
 
 signals:
     void queryFinished(QNetworkReply* reply);
 
 private:
-    quint64 replyId;
-    QString isMonthlyUrl;
-    QNetworkAccessManager* isMonthlyManager;
+    quint64 replyId; // to specific id for every reply
+    QString isMonthlyUrl; // url for query
+    QNetworkAccessManager* isMonthlyManager; // to manage network access
 
 };
 
