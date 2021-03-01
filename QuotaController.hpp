@@ -1,5 +1,5 @@
-#ifndef QUOTACONTROLLER_H
-#define QUOTACONTROLLER_H
+#ifndef ISMONTHLY_QUOTACONTROLLER_HPP
+#define ISMONTHLY_QUOTACONTROLLER_HPP
 
 #include <QObject>
 #include <QNetworkAccessManager>
@@ -38,4 +38,4 @@ private:
 };
 
 } // namespace isMonthly
-#endif // QUOTACONTROLLER_H
+#endif // ISMONTHLY_QUOTACONTROLLER_HPP

@@ -1,5 +1,5 @@
-#ifndef ISMONTHLY_H
-#define ISMONTHLY_H
+#ifndef ISMONTHLY_ISMONTHLY_HPP
+#define ISMONTHLY_ISMONTHLY_HPP
 
 #include "IsMonthlyController.hpp"
 #include "QuotaController.hpp"
@@ -59,4 +59,4 @@ private:
 };
 
 } // namespace isMonthly
-#endif // ISMONTHLY_H
+#endif // ISMONTHLY_ISMONTHLY_HPP
