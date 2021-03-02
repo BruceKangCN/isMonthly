@@ -19,8 +19,8 @@ public:
     explicit QuotaController(QObject *parent = nullptr);
     ~QuotaController();
 
-    void setUrl(const QString url); // set query url
-    void setSerialCode(const QString serialCode); // set serial code
+    void setUrl(const QString& url); // set query url
+    void setSerialCode(const QString& serialCode); // set serial code
     void query() const; // start query
     const QString getQuota(const QString& response) const; // return result
 

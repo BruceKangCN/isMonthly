@@ -39,7 +39,7 @@ public:
 protected:
     void appendResult(QNetworkReply* reply); // append a parsed result to the model
     void setQuota(QNetworkReply* reply); // set quota info
-    bool parseProxy(QString url); // parse string to proxy
+    bool parseProxy(const QString& url); // parse string to proxy
 
 private slots:
     void on_pushButton_clicked();

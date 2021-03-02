@@ -74,7 +74,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     connect(&quotaController, &QuotaController::queryFinished,
         this, &IsMonthly::setQuota);
 
-    log_wrapper_init("isMonthly.log");
+    log_wrapper_init("isMonthly.log", QtInfoMsg);
 
     /*
      * check SSL compatibility, only for debug purpose
@@ -98,6 +98,7 @@ void IsMonthly::on_pushButton_clicked()
 {
     QRegularExpression seprator("\\s*,\\s*");
     QStringList ids = ui->lineEdit->text().split(seprator);
+    logger.info() << "ids for querying: " << ids.join(',');
     for (QString& id : ids) {
         isMonthlyController.query(id);
     }
@@ -112,6 +113,8 @@ void IsMonthly::appendResult(QNetworkReply* reply)
 {
     // get the result struct from return value
     const IsMonthlyResponse& response = isMonthlyController.getResponse(reply);
+    logger.debug() << "get response: " << response.replyId << response.cid
+                   << response.success << response.isMonthly << response.bitrate;
 
     // create simple items and set data based on result
     QStandardItem* idItem = new QStandardItem();
@@ -130,9 +133,15 @@ void IsMonthly::appendResult(QNetworkReply* reply)
             isMonthlyItem->setData(tr("月额：否"), Qt::DisplayRole);
         }
     } else {
+        logger.critical() << "query faild for cid: " << response.cid;
         isMonthlyItem->setData(tr("查询失败"), Qt::DisplayRole);
     }
 
+    logger.info() << "add a row to the model : "
+                  << idItem->data(Qt::DisplayRole)
+                  << cidItem->data(Qt::DisplayRole)
+                  << isMonthlyItem->data(Qt::DisplayRole)
+                  << bitrateItem->data(Qt::DisplayRole);
     // append a new row with the items to the IsMonthlyModel
     isMonthlyModel->appendRow({idItem, cidItem, isMonthlyItem, bitrateItem});
 }
@@ -151,6 +160,7 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
         auto selectedRows = ui->tableView->selectionModel()->selectedRows();
         quint64 count = 0;
         for (auto& index : selectedRows) {
+            logger.debug() << "delete row:" << index.row();
             /*
              * row number will be changed after takeRow
              * so minus the number of taken rows
@@ -170,6 +180,7 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
         for (auto& index : selectedRows) {
             selected.append(isMonthlyModel->data(index).toString());
         }
+        logger.debug() << "copy ids: " << selected.join(',');
         QGuiApplication::clipboard()->setText(selected.join(','));
     }
 }
@@ -233,7 +244,9 @@ void IsMonthly::on_btnApply_clicked()
  * return true if parse successfully
  * the result is stored in private member proxy
  */
-bool IsMonthly::parseProxy(QString url) {
+bool IsMonthly::parseProxy(const QString& url) {
+    logger.debug() << "parse proxy for url: " << url;
+
     // convert QString to QUrl and validate
     QUrl proxyUrl(url);
     if (!proxyUrl.isValid()) {
@@ -280,6 +293,7 @@ bool IsMonthly::parseProxy(QString url) {
 
 void IsMonthly::on_btnQuota_clicked()
 {
+    logger.debug() << "quota button clicked";
     /*
      * let the QuotaController start query
      * when query is over, QuotaController::queryFinished is emitted
@@ -292,6 +306,7 @@ inline void IsMonthly::setQuota(QNetworkReply* reply)
 {
     // get the response content, then the quota can be parsed with getQuota
     QString response = QString::fromUtf8(reply->readAll());
+    logger.debug() << "quota response: " << response;
     /*
      * let the QuotaController parse the response content
      * and return a quota result QString

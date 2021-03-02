@@ -24,16 +24,19 @@ IsMonthlyController::~IsMonthlyController()
 void IsMonthlyController::setUrl(const QString& url)
 {
     this->isMonthlyUrl = url;
+    logger.info() << "query url set to" << url;
 }
 
 void IsMonthlyController::query(const QString& cid) const
 {
+    logger.info() << "query for" << cid;
     QNetworkRequest request(isMonthlyUrl + cid);
     isMonthlyManager->get(request);
 }
 
 const IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
 {
+    logger.debug() << "isMonthly response: " << reply->readAll();
     IsMonthlyResponse response = IsMonthlyResponse();
     // set the auto-increment id for every response
     response.replyId = this->replyId++;

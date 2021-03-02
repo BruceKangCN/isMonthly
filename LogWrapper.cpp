@@ -1,15 +1,35 @@
 #include "LogWrapper.hpp"
 
+#include <QCoreApplication>
 #include <QDateTime>
 
-QFile* logFile;
+QtMsgType log_level; // log level setting
+QFile* logFile; // a pointer to the log file
 const char* logFormat = "[%1][%2][%3:%4 %5]%6\n";
 const char* timeFormat = "yyyy-MM-dd hh:mm:ss.zzz";
 
+/*
+ * log message handler
+ * type must be QtMessageHandler,
+ * aka (void)(QtMsgType, const QMessageLogContext&, const QString&)
+ * so do not wrap it with namespace
+ */
 void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
 {
+    // check for log level setting
+    switch (log_level) {
+    case QtFatalMsg   : if (type == QtCriticalMsg) return;
+    case QtCriticalMsg: if (type == QtWarningMsg)  return;
+    case QtWarningMsg : if (type == QtInfoMsg)     return;
+    case QtInfoMsg    : if (type == QtDebugMsg)    return;
+    case QtDebugMsg   : break;
+    default: return;
+    }
+
+    // get a formatted current DateTime string
     QString time = QDateTime::currentDateTime().toString(timeFormat);
 
+    // get a proper level string
     QString level;
     switch (type) {
     case QtDebugMsg   : level = "DEBUG"   ; break;
@@ -20,25 +40,40 @@ void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
     default           : level = ""        ; break;
     }
 
-    logFile->write(QString(logFormat).arg(time).arg(level).arg(ctx.file)
-                       .arg(ctx.line).arg(ctx.function).arg(msg).toUtf8());
+    // write the formmated log string to file
+    logFile->write(QString(logFormat)
+                       .arg(time)
+                       .arg(level)
+                       .arg(ctx.file)
+                       .arg(ctx.line)
+                       .arg(ctx.function)
+                       .arg(msg)
+                       .toUtf8());
 }
 
 namespace isMonthly {
 
-void log_wrapper_init(const char* path)
+void log_wrapper_init(const char* path, QtMsgType level)
 {
+    log_level = level; // set the log level
     logFile = new QFile(path);
-    qInstallMessageHandler(msg_hnd);
-    logFile->open(QIODevice::WriteOnly | QIODevice::Append);
+    qInstallMessageHandler(msg_hnd); // install the log message handler
+    logFile->open(QIODevice::WriteOnly | QIODevice::Append); // open the log file
+
+    // print version infomation
+    logger.info(QString("// %1 %2 //").arg(qAppName(), qApp->applicationVersion())
+                    .toUtf8().constData());
+    logger.info(QString("// based on Qt version %1 //").arg(QT_VERSION_STR)
+                    .toUtf8().constData());
 }
 
 void log_wrapper_destroy()
 {
+    // close the log file if it is open
     if (logFile->isOpen()) {
         logFile->close();
     }
-    delete logFile;
+    delete logFile; // release the memory
 }
 
 } // namespace isMonthly
