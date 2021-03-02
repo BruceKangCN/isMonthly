@@ -1,5 +1,5 @@
-#ifndef QUOTACONTROLLER_H
-#define QUOTACONTROLLER_H
+#ifndef ISMONTHLY_QUOTACONTROLLER_HPP
+#define ISMONTHLY_QUOTACONTROLLER_HPP
 
 #include <QObject>
 #include <QNetworkAccessManager>
@@ -19,8 +19,8 @@ public:
     explicit QuotaController(QObject *parent = nullptr);
     ~QuotaController();
 
-    void setUrl(const QString url); // set query url
-    void setSerialCode(const QString serialCode); // set serial code
+    void setUrl(const QString& url); // set query url
+    void setSerialCode(const QString& serialCode); // set serial code
     void query() const; // start query
     const QString getQuota(const QString& response) const; // return result
 
@@ -38,4 +38,4 @@ private:
 };
 
 } // namespace isMonthly
-#endif // QUOTACONTROLLER_H
+#endif // ISMONTHLY_QUOTACONTROLLER_HPP

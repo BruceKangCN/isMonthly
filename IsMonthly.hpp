@@ -1,8 +1,9 @@
-#ifndef ISMONTHLY_H
-#define ISMONTHLY_H
+#ifndef ISMONTHLY_ISMONTHLY_HPP
+#define ISMONTHLY_ISMONTHLY_HPP
 
 #include "IsMonthlyController.hpp"
 #include "QuotaController.hpp"
+#include "LogWrapper.hpp"
 
 #include <QWidget>
 #include <QUrl>
@@ -23,6 +24,7 @@ namespace isMonthly {
  * a class to interactive with the ui
  * and handle the settings
  */
+
 class IsMonthly : public QWidget
 {
     Q_OBJECT
@@ -37,7 +39,7 @@ public:
 protected:
     void appendResult(QNetworkReply* reply); // append a parsed result to the model
     void setQuota(QNetworkReply* reply); // set quota info
-    bool parseProxy(QString url); // parse string to proxy
+    bool parseProxy(const QString& url); // parse string to proxy
 
 private slots:
     void on_pushButton_clicked();
@@ -56,7 +58,8 @@ private:
 
     // model for data from IsMonthlyController
     QStandardItemModel* isMonthlyModel;
+
 };
 
 } // namespace isMonthly
-#endif // ISMONTHLY_H
+#endif // ISMONTHLY_ISMONTHLY_HPP

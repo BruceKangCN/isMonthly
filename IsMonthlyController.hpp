@@ -1,5 +1,5 @@
-#ifndef ISMONTHLYCONTROLLER_H
-#define ISMONTHLYCONTROLLER_H
+#ifndef ISMONTHLY_ISMONTHLYCONTROLLER_HPP
+#define ISMONTHLY_ISMONTHLYCONTROLLER_HPP
 
 #include <QObject>
 #include <QNetworkAccessManager>
@@ -43,4 +43,4 @@ private:
 };
 
 } // namespace isMonthly
-#endif // ISMONTHLYCONTROLLER_H
+#endif // ISMONTHLY_ISMONTHLYCONTROLLER_HPP
