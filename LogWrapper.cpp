@@ -6,7 +6,7 @@
 QtMsgType log_level; // log level setting
 QFile* logFile; // a pointer to the log file
 const char* logFormat = "[%1][%2][%3:%4 %5]%6\n";
-const char* timeFormat = "yyyy-MM-dd hh:mm:ss.zzz";
+const char* timeFormat = "yyyy-MM-dd hh:mm:ss.zzz t";
 
 /*
  * log message handler
