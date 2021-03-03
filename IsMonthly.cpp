@@ -17,6 +17,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     , ui(new Ui::Widget)
     , config(new QSettings("app.ini", QSettings::IniFormat, this))
     , isMonthlyModel(new QStandardItemModel(0, 4, this))
+    , logLevel(QtInfoMsg)
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
@@ -65,6 +66,32 @@ IsMonthly::IsMonthly(QWidget *parent)
         const int language = config->value("language").toInt();
         ui->boxLanguage->setCurrentIndex(language);
     }
+    if (config->contains("loglevel")) {
+        logLevel = static_cast<QtMsgType>(config->value("loglevel").toInt());
+    }
+
+    // set the log level combo box based on log level setting
+    switch (logLevel) {
+    case QtDebugMsg:
+        ui->boxLogLevel->setCurrentIndex(0);
+        break;
+    case QtInfoMsg:
+        ui->boxLogLevel->setCurrentIndex(1);
+        break;
+    case QtWarningMsg:
+        ui->boxLogLevel->setCurrentIndex(2);
+        break;
+    case QtCriticalMsg:
+        ui->boxLogLevel->setCurrentIndex(3);
+        break;
+    case QtFatalMsg:
+        ui->boxLogLevel->setCurrentIndex(4);
+        break;
+    default:
+        break;
+    }
+    // then inet the log wrapper
+    log_wrapper_init("isMonthly.log", logLevel);
 
     /*
      * init connections
@@ -73,8 +100,6 @@ IsMonthly::IsMonthly(QWidget *parent)
         this, &IsMonthly::appendResult);
     connect(&quotaController, &QuotaController::queryFinished,
         this, &IsMonthly::setQuota);
-
-    log_wrapper_init("isMonthly.log", QtInfoMsg);
 
     /*
      * check SSL compatibility, only for debug purpose
@@ -202,10 +227,38 @@ void IsMonthly::on_btnApply_clicked()
 
     const int language = ui->boxLanguage->currentIndex();
 
+    const QtMsgType currentLogLevel = logLevel;
+    switch (ui->boxLogLevel->currentIndex()) {
+    case 0:
+        logLevel = QtDebugMsg;
+        break;
+    case 1:
+        logLevel = QtInfoMsg;
+        break;
+    case 2:
+        logLevel = QtWarningMsg;
+        break;
+    case 3:
+        logLevel = QtCriticalMsg;
+        break;
+    case 4:
+        logLevel = QtFatalMsg;
+        break;
+    default:
+        logLevel = QtInfoMsg;
+        break;
+    }
+
     config->setValue("url", isMonthlyUrl);
     config->setValue("quotaUrs", quotaUrl);
     config->setValue("serialCode", serialCode);
     config->setValue("language", language);
+    config->setValue("loglevel", logLevel);
+
+    if (logLevel != currentLogLevel) {
+        log_wrapper_destroy();
+        log_wrapper_init("isMonthly.log", logLevel);
+    }
 
     // proxy settings
     if (ui->radioNoProxy->isChecked()) {

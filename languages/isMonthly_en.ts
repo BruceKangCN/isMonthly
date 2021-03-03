@@ -55,44 +55,74 @@
         <translation>settings</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="137"/>
+        <location filename="../widget.ui" line="124"/>
         <source>应用</source>
         <translation>apply</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="187"/>
+        <location filename="../widget.ui" line="159"/>
         <source>语言</source>
         <translation>language</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="208"/>
-        <location filename="../widget.ui" line="218"/>
+        <location filename="../widget.ui" line="166"/>
+        <location filename="../widget.ui" line="176"/>
         <source>简体中文</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="223"/>
+        <location filename="../widget.ui" line="181"/>
         <source>en-US</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="194"/>
+        <location filename="../widget.ui" line="189"/>
         <source>视频url</source>
         <translation>query url</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="201"/>
+        <location filename="../widget.ui" line="203"/>
         <source>月额url</source>
         <translation>quota url</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="159"/>
+        <location filename="../widget.ui" line="217"/>
         <source>序列号</source>
         <translation>serial code</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="180"/>
+        <location filename="../widget.ui" line="224"/>
         <source>00000-00000-00000-00000-00000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="231"/>
+        <source>日志等级</source>
+        <translation>log level</translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="239"/>
+        <source>debug</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="244"/>
+        <source>info</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="249"/>
+        <source>warn</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="254"/>
+        <source>CRITICAL</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="259"/>
+        <source>FATAL</source>
         <translation></translation>
     </message>
     <message>
@@ -100,32 +130,32 @@
         <translation type="vanished">log path</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="231"/>
+        <location filename="../widget.ui" line="267"/>
         <source>代理</source>
         <translation>proxy</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="237"/>
+        <location filename="../widget.ui" line="273"/>
         <source>无</source>
         <translation>no</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="244"/>
+        <location filename="../widget.ui" line="280"/>
         <source>系统代理(http/socks5)</source>
         <translation>system proxy(http/socks5)</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="257"/>
+        <location filename="../widget.ui" line="293"/>
         <source>自定义</source>
         <translation>custom</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="166"/>
+        <location filename="../widget.ui" line="196"/>
         <source>https://v2.mahuateng.cf/isMonthly/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="173"/>
+        <location filename="../widget.ui" line="210"/>
         <source>https://v2.mahuateng.cf/check_quota?serial_code=</source>
         <translation></translation>
     </message>
@@ -149,32 +179,32 @@
 <context>
     <name>isMonthly::IsMonthly</name>
     <message>
-        <location filename="../IsMonthly.cpp" line="24"/>
+        <location filename="../IsMonthly.cpp" line="25"/>
         <source>结果</source>
         <translation>result</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="24"/>
+        <location filename="../IsMonthly.cpp" line="25"/>
         <source>码率</source>
         <translation>bitrate</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="131"/>
+        <location filename="../IsMonthly.cpp" line="156"/>
         <source>月额：是</source>
         <translation>monthly: true</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="133"/>
+        <location filename="../IsMonthly.cpp" line="158"/>
         <source>月额：否</source>
         <translation>monthly: false</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="137"/>
+        <location filename="../IsMonthly.cpp" line="162"/>
         <source>查询失败</source>
         <translation>query failed</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="234"/>
+        <location filename="../IsMonthly.cpp" line="287"/>
         <source>解析出错</source>
         <translation>failed to parse</translation>
     </message>
