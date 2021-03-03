@@ -59,6 +59,8 @@ private:
     // model for data from IsMonthlyController
     QStandardItemModel* isMonthlyModel;
 
+    QtMsgType logLevel; // log level setting
+
 };
 
 } // namespace isMonthly
