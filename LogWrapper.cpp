@@ -66,6 +66,8 @@ void log_wrapper_init(const char* path, QtMsgType level)
                     .toUtf8().constData());
     logger.info(QString("// based on Qt version %1 //").arg(QT_VERSION_STR)
                     .toUtf8().constData());
+    logger.debug(QString("// running with Qt version %1 //").arg(qVersion())
+                    .toUtf8().constData());
 }
 
 void log_wrapper_destroy()
