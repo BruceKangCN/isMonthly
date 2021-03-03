@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QTextStream>
 
 QtMsgType log_level; // log level setting
 QFile* logFile; // a pointer to the log file
@@ -41,14 +42,14 @@ void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
     }
 
     // write the formmated log string to file
-    logFile->write(QString(logFormat)
+    // DO NOT USE QFile::wirte, because it only writes on program exit
+    QTextStream(logFile) << QString(logFormat)
                        .arg(time)
                        .arg(level)
                        .arg(ctx.file)
                        .arg(ctx.line)
                        .arg(ctx.function)
-                       .arg(msg)
-                       .toUtf8());
+                       .arg(msg);
 }
 
 namespace isMonthly {
