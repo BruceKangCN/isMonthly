@@ -90,7 +90,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     default:
         break;
     }
-    // then inet the log wrapper
+    // then init the log wrapper
     log_wrapper_init("isMonthly.log", logLevel);
 
     /*
