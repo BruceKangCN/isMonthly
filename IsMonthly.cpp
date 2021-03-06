@@ -9,6 +9,7 @@
 #include <QNetworkProxyQuery>
 #include <QNetworkProxyFactory>
 #include <QRegularExpression>
+#include <QMessageBox>
 
 namespace isMonthly {
 
@@ -21,6 +22,7 @@ IsMonthly::IsMonthly(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
+    ui->tabWidget->setCurrentIndex(0);
 
     isMonthlyModel->setHorizontalHeaderLabels({"#", "id", tr("结果"), tr("码率")});
     ui->tableView->setModel(isMonthlyModel);
@@ -365,6 +367,14 @@ inline void IsMonthly::setQuota(QNetworkReply* reply)
      * and return a quota result QString
      */
     ui->inpQuota->setText(quotaController.getQuota(response));
+}
+
+void isMonthly::IsMonthly::on_btnAbout_clicked()
+{
+    QMessageBox::about(this, "about",
+        "<a href='https://github.com/BruceKangCN/isMonthly/releases'>isMonthly</a> "
+        + QCoreApplication::applicationVersion() + "<br/>"
+        + "Copyright (c) 2021 BruceKangCN");
 }
 
 } // namespace isMonthly

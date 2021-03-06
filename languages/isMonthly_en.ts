@@ -55,73 +55,78 @@
         <translation>settings</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="124"/>
+        <location filename="../widget.ui" line="290"/>
+        <source>关于</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widget.ui" line="310"/>
         <source>应用</source>
         <translation>apply</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="159"/>
+        <location filename="../widget.ui" line="139"/>
         <source>语言</source>
         <translation>language</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="166"/>
-        <location filename="../widget.ui" line="176"/>
+        <location filename="../widget.ui" line="146"/>
+        <location filename="../widget.ui" line="156"/>
         <source>简体中文</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="181"/>
+        <location filename="../widget.ui" line="161"/>
         <source>en-US</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="189"/>
+        <location filename="../widget.ui" line="169"/>
         <source>视频url</source>
         <translation>query url</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="203"/>
+        <location filename="../widget.ui" line="183"/>
         <source>月额url</source>
         <translation>quota url</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="217"/>
+        <location filename="../widget.ui" line="197"/>
         <source>序列号</source>
         <translation>serial code</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="224"/>
+        <location filename="../widget.ui" line="204"/>
         <source>00000-00000-00000-00000-00000</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="231"/>
+        <location filename="../widget.ui" line="211"/>
         <source>日志等级</source>
         <translation>log level</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="239"/>
+        <location filename="../widget.ui" line="219"/>
         <source>debug</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="244"/>
+        <location filename="../widget.ui" line="224"/>
         <source>info</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="249"/>
+        <location filename="../widget.ui" line="229"/>
         <source>warn</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="254"/>
+        <location filename="../widget.ui" line="234"/>
         <source>CRITICAL</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="259"/>
+        <location filename="../widget.ui" line="239"/>
         <source>FATAL</source>
         <translation></translation>
     </message>
@@ -130,32 +135,32 @@
         <translation type="vanished">log path</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="267"/>
+        <location filename="../widget.ui" line="247"/>
         <source>代理</source>
         <translation>proxy</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="273"/>
+        <location filename="../widget.ui" line="253"/>
         <source>无</source>
         <translation>no</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="280"/>
+        <location filename="../widget.ui" line="260"/>
         <source>系统代理(http/socks5)</source>
         <translation>system proxy(http/socks5)</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="293"/>
+        <location filename="../widget.ui" line="273"/>
         <source>自定义</source>
         <translation>custom</translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="196"/>
+        <location filename="../widget.ui" line="176"/>
         <source>https://v2.mahuateng.cf/isMonthly/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../widget.ui" line="210"/>
+        <location filename="../widget.ui" line="190"/>
         <source>https://v2.mahuateng.cf/check_quota?serial_code=</source>
         <translation></translation>
     </message>
@@ -179,32 +184,32 @@
 <context>
     <name>isMonthly::IsMonthly</name>
     <message>
-        <location filename="../IsMonthly.cpp" line="25"/>
+        <location filename="../IsMonthly.cpp" line="27"/>
         <source>结果</source>
         <translation>result</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="25"/>
+        <location filename="../IsMonthly.cpp" line="27"/>
         <source>码率</source>
         <translation>bitrate</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="156"/>
+        <location filename="../IsMonthly.cpp" line="158"/>
         <source>月额：是</source>
         <translation>monthly: true</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="158"/>
+        <location filename="../IsMonthly.cpp" line="160"/>
         <source>月额：否</source>
         <translation>monthly: false</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="162"/>
+        <location filename="../IsMonthly.cpp" line="164"/>
         <source>查询失败</source>
         <translation>query failed</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="287"/>
+        <location filename="../IsMonthly.cpp" line="289"/>
         <source>解析出错</source>
         <translation>failed to parse</translation>
     </message>

@@ -45,6 +45,7 @@ private slots:
     void on_pushButton_clicked();
     void on_btnApply_clicked();
     void on_btnQuota_clicked();
+    void on_btnAbout_clicked();
 
 private:
     Ui::Widget* ui;
