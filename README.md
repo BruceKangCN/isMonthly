@@ -1,6 +1,8 @@
 # IS MONTHLY
 
-A Qt based program to query whether an av is monthly video or not
+A Qt based program to query whether an av is monthly video or not  
+The author is now addicted to Japanese light novels and have no time to maintain this project  
+🕊🕊🕊🕊🕊🕊🕊🕊🕊🕊
 
 ## FUNCTION
 
