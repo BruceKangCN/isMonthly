@@ -193,10 +193,8 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
              * so minus the number of taken rows
              * and then add the count
              */
-            auto items = isMonthlyModel->takeRow(index.row() - count++);
-            for (auto* item : items) {
-                delete item;
-            }
+            isMonthlyModel->takeRow(index.row() - count++);
+            // no need to delete items, they'll be delete in the QList destructor
         }
     }
 
