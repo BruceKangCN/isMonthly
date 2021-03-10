@@ -2,13 +2,6 @@
 #include "ui_widget.h"
 
 #include <QClipboard>
-#include <QDir>
-#include <QFileDialog>
-#include <QList>
-#include <QNetworkProxy>
-#include <QNetworkProxyQuery>
-#include <QNetworkProxyFactory>
-#include <QRegularExpression>
 #include <QMessageBox>
 
 namespace isMonthly {

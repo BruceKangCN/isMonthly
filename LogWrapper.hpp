@@ -6,7 +6,6 @@
 // construct a logger with proper context
 #define logger (QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO))
 
-#include <QObject>
 #include <QFile>
 #include <QMessageLogger>
 

@@ -6,11 +6,8 @@
 #include "LogWrapper.hpp"
 
 #include <QWidget>
-#include <QUrl>
 #include <QKeyEvent>
-#include <QTableView>
 #include <QStandardItemModel>
-#include <QStandardItem>
 #include <QSettings>
 #include <QNetworkProxy>
 
