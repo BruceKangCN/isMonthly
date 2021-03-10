@@ -76,7 +76,8 @@ void log_wrapper_destroy()
     if (logFile->isOpen()) {
         logFile->close();
     }
-    delete logFile; // release the memory
+    if (logFile) delete logFile; // release the memory
+    logFile = nullptr;
 }
 
 } // namespace isMonthly
