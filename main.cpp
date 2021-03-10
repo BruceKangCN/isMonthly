@@ -17,14 +17,17 @@ int main(int argc, char *argv[])
 
     // install translator
     QTranslator translator;
+    QString trPath;
     switch (language) {
     case 0: // Chinese_Simplified
         break;
     case 1:
-        translator.load("translations/isMonthly_en");
+        trPath = "translations/isMonthly_en";
         break;
     }
-    a.installTranslator(&translator);
+    if (translator.load(trPath)) {
+        a.installTranslator(&translator);
+    }
 
     isMonthly::IsMonthly w;
     w.show();
