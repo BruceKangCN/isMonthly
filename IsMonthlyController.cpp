@@ -1,5 +1,4 @@
 #include "IsMonthlyController.hpp"
-#include "LogWrapper.hpp"
 
 #include <QJsonDocument>
 
@@ -19,19 +18,6 @@ IsMonthlyController::IsMonthlyController(QObject *parent)
 IsMonthlyController::~IsMonthlyController()
 {
 
-}
-
-void IsMonthlyController::setUrl(const QString& url)
-{
-    logger.info() << "query url set to" << url;
-    this->isMonthlyUrl = url;
-}
-
-void IsMonthlyController::query(const QString& cid) const
-{
-    logger.info() << "query for" << cid;
-    QNetworkRequest request(isMonthlyUrl + cid);
-    isMonthlyManager->get(request);
 }
 
 const IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)

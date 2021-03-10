@@ -1,6 +1,8 @@
 #ifndef ISMONTHLY_QUOTACONTROLLER_HPP
 #define ISMONTHLY_QUOTACONTROLLER_HPP
 
+#include "LogWrapper.hpp"
+
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -35,6 +37,25 @@ private:
     QString serialCode; // serial code to query
 
 };
+
+inline void QuotaController::setUrl(const QString& url)
+{
+    logger.info() << "quota url set to" << url;
+    this->quotaUrl = url;
+}
+
+inline void QuotaController::setSerialCode(const QString& serialCode)
+{
+    logger.info() << "serial code set to" << serialCode;
+    this->serialCode = serialCode;
+}
+
+inline void QuotaController::query() const
+{
+    logger.info() << "query for quota";
+    QNetworkRequest request(quotaUrl + serialCode);
+    quotaManager->get(request);
+}
 
 inline const QString QuotaController::getQuota(const QString &response) const {
     return parseQuota(response);

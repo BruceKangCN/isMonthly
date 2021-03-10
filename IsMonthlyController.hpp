@@ -1,6 +1,8 @@
 #ifndef ISMONTHLY_ISMONTHLYCONTROLLER_HPP
 #define ISMONTHLY_ISMONTHLYCONTROLLER_HPP
 
+#include "LogWrapper.hpp"
+
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -40,6 +42,19 @@ private:
     QNetworkAccessManager* isMonthlyManager; // to manage network access
 
 };
+
+inline void IsMonthlyController::setUrl(const QString& url)
+{
+    logger.info() << "query url set to" << url;
+    this->isMonthlyUrl = url;
+}
+
+inline void IsMonthlyController::query(const QString& cid) const
+{
+    logger.info() << "query for" << cid;
+    QNetworkRequest request(isMonthlyUrl + cid);
+    isMonthlyManager->get(request);
+}
 
 } // namespace isMonthly
 #endif // ISMONTHLY_ISMONTHLYCONTROLLER_HPP
