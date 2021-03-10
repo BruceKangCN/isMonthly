@@ -1,4 +1,5 @@
 #include "QuotaController.hpp"
+#include "LogWrapper.hpp"
 
 #include <QRegularExpression>
 
@@ -17,6 +18,25 @@ QuotaController::QuotaController(QObject *parent)
 QuotaController::~QuotaController()
 {
 
+}
+
+void QuotaController::setUrl(const QString& url)
+{
+    logger.info() << "quota url set to" << url;
+    this->quotaUrl = url;
+}
+
+void QuotaController::setSerialCode(const QString& serialCode)
+{
+    logger.info() << "serial code set to" << serialCode;
+    this->serialCode = serialCode;
+}
+
+void QuotaController::query() const
+{
+    logger.info() << "query for quota";
+    QNetworkRequest request(quotaUrl + serialCode);
+    quotaManager->get(request);
 }
 
 const QString QuotaController::parseQuota(const QString& content) const
