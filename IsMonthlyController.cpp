@@ -23,8 +23,8 @@ IsMonthlyController::~IsMonthlyController()
 
 void IsMonthlyController::setUrl(const QString& url)
 {
-    this->isMonthlyUrl = url;
     logger.info() << "query url set to" << url;
+    this->isMonthlyUrl = url;
 }
 
 void IsMonthlyController::query(const QString& cid) const

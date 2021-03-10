@@ -39,11 +39,6 @@ void QuotaController::query() const
     quotaManager->get(request);
 }
 
-const QString QuotaController::getQuota(const QString& response) const
-{
-    return parseQuota(response);
-}
-
 const QString QuotaController::parseQuota(const QString& content) const
 {
     logger.debug() << "parse for content: " << content;

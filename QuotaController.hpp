@@ -22,7 +22,9 @@ public:
     void setUrl(const QString& url); // set query url
     void setSerialCode(const QString& serialCode); // set serial code
     void query() const; // start query
-    const QString getQuota(const QString& response) const; // return result
+    const QString getQuota(const QString& response) const { // return result
+        return parseQuota(response);
+    }
 
 signals:
     void queryFinished(QNetworkReply* reply);
