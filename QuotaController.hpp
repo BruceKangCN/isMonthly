@@ -21,9 +21,7 @@ public:
     void setUrl(const QString& url); // set query url
     void setSerialCode(const QString& serialCode); // set serial code
     void query() const; // start query
-    const QString getQuota(const QString& response) const { // return result
-        return parseQuota(response);
-    }
+    const QString getQuota(const QString& response) const; // return result
 
 signals:
     void queryFinished(QNetworkReply* reply);
@@ -37,6 +35,10 @@ private:
     QString serialCode; // serial code to query
 
 };
+
+inline const QString QuotaController::getQuota(const QString &response) const {
+    return parseQuota(response);
+}
 
 } // namespace isMonthly
 #endif // ISMONTHLY_QUOTACONTROLLER_HPP
