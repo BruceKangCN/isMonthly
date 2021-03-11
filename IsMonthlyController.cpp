@@ -2,6 +2,7 @@
 #include "LogWrapper.hpp"
 
 #include <QJsonDocument>
+#include <QJsonParseError>
 
 namespace isMonthly {
 
@@ -36,7 +37,8 @@ void IsMonthlyController::query(const QString& cid) const
 
 const IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
 {
-    logger.debug() << "isMonthly response: " << reply->readAll();
+    const QByteArray& responseBytes = reply->readAll();
+    logger.debug() << "isMonthly response: " << responseBytes;
     IsMonthlyResponse response = IsMonthlyResponse();
     // set the auto-increment id for every response
     response.replyId = this->replyId++;
@@ -46,10 +48,18 @@ const IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
     /*
      * convert the reply content to JSON object and set response values
      */
-    QJsonDocument responseJson = QJsonDocument::fromJson(reply->readAll());
+    QJsonParseError err;
+    const QJsonDocument& responseJson = QJsonDocument::fromJson(responseBytes, &err);
+    if (err.error != QJsonParseError::NoError) {
+      logger.critical() << "JSON parse error: " << err.errorString();
+      return response;
+    }
     response.bitrate = responseJson["bitrate"].toDouble();
     response.isMonthly = responseJson["monthly"].toBool();
     response.success = responseJson["success"].toBool();
+    logger.debug() << "IsMonthlyResponse: " << response.replyId
+                   << response.cid << response.success << response.bitrate
+                   << response.isMonthly;
 
     return response;
 }

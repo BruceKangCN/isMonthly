@@ -29,22 +29,22 @@ IsMonthly::IsMonthly(QWidget *parent)
      * finally set the ui
      */
     if (config->contains("url")) {
-        const QString isMonthlyUrl = config->value("url").toString();
+        const QString& isMonthlyUrl = config->value("url").toString();
         isMonthlyController.setUrl(isMonthlyUrl);
         ui->inpUrl->setText(isMonthlyUrl);
     }
     if (config->contains("quotaUrl")) {
-        const QString quotaUrl = config->value("quotaUrl").toString();
+        const QString& quotaUrl = config->value("quotaUrl").toString();
         quotaController.setUrl(quotaUrl);
         ui->inpQuotaUrl->setText(quotaUrl);
     }
     if (config->contains("serialCode")) {
-        const QString serialCode = config->value("serialCode").toString();
+        const QString& serialCode = config->value("serialCode").toString();
         quotaController.setSerialCode(serialCode);
         ui->inpSN->setText(serialCode);
     }
     if (config->contains("proxy")) {
-        QString v = config->value("proxy").toString();
+        const QString& v = config->value("proxy").toString();
         if (v == "no") {
             ui->radioNoProxy->setChecked(true);
             QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
