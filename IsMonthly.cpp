@@ -193,7 +193,7 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
 
     // copy cids when copy sequence is pressed
     if (ev->matches(QKeySequence::Copy)) {
-        auto selectedRows = ui->tableView->selectionModel()->selectedRows(1);
+        const auto& selectedRows = ui->tableView->selectionModel()->selectedRows(1);
         QStringList selected = QStringList();
         for (auto& index : selectedRows) {
             selected.append(isMonthlyModel->data(index).toString());
