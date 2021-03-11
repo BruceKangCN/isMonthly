@@ -17,7 +17,7 @@ const char* timeFormat = "yyyy-MM-dd hh:mm:ss.zzz t";
  */
 void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
 {
-    // check for log level setting
+    // check for log level setting, DO NOT add break!
     switch (log_level) {
     case QtFatalMsg   : if (type == QtCriticalMsg) return;
     case QtCriticalMsg: if (type == QtWarningMsg)  return;

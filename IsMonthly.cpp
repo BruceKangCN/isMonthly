@@ -86,12 +86,7 @@ IsMonthly::IsMonthly(QWidget *parent)
         break;
     }
     // then init the log wrapper
-    try {
-        log_wrapper_init("isMonthly.log", logLevel);
-    } catch (std::bad_alloc& e) {
-        qFatal(e.what());
-        exit(EXIT_FAILURE);
-    }
+    log_wrapper_init("isMonthly.log", logLevel);
 
     /*
      * init connections

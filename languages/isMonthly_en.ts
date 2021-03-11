@@ -194,22 +194,22 @@
         <translation>bitrate</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="156"/>
+        <location filename="../IsMonthly.cpp" line="151"/>
         <source>月额：是</source>
         <translation>monthly: true</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="158"/>
+        <location filename="../IsMonthly.cpp" line="153"/>
         <source>月额：否</source>
         <translation>monthly: false</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="162"/>
+        <location filename="../IsMonthly.cpp" line="157"/>
         <source>查询失败</source>
         <translation>query failed</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="285"/>
+        <location filename="../IsMonthly.cpp" line="280"/>
         <source>解析出错</source>
         <translation>failed to parse</translation>
     </message>
