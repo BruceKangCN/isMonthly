@@ -177,9 +177,9 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
     // delete selected items when delete is pressed
     if (ev->key() == Qt::Key_Delete)
     {
-        auto selectedRows = ui->tableView->selectionModel()->selectedRows();
+        const auto& selectedRows = ui->tableView->selectionModel()->selectedRows();
         quint64 count = 0;
-        for (auto& index : selectedRows) {
+        for (const auto& index : selectedRows) {
             logger.debug() << "delete row:" << index.row();
             /*
              * row number will be changed after takeRow
