@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QTextStream>
+#include <QDir>
 
 QtMsgType log_level; // log level setting
 QFile logFile; // a pointer to the log file
@@ -52,6 +53,9 @@ namespace isMonthly {
 void log_wrapper_init(const char* path, QtMsgType level)
 {
     log_level = level; // set the log level
+#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
+    QDir::setCurrent("/var/log/isMonthly");
+#endif
     logFile.setFileName(path);
     qInstallMessageHandler(msg_hnd); // install the log message handler
     logFile.open(QIODevice::WriteOnly | QIODevice::Append); // open the log file
