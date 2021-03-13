@@ -198,8 +198,9 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
         for (auto& index : selectedRows) {
             selected.append(isMonthlyModel->data(index).toString());
         }
-        logger.debug() << "copy ids: " << selected.join(',');
-        QGuiApplication::clipboard()->setText(selected.join(','));
+        const QString& joined = selected.join(',');
+        logger.debug() << "copy ids: " << joined;
+        QGuiApplication::clipboard()->setText(joined);
     }
 }
 

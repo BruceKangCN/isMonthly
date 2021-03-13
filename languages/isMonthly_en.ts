@@ -209,7 +209,7 @@
         <translation>query failed</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="280"/>
+        <location filename="../IsMonthly.cpp" line="281"/>
         <source>解析出错</source>
         <translation>failed to parse</translation>
     </message>
