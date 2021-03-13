@@ -56,7 +56,7 @@ void log_wrapper_init(const char* path, QtMsgType level)
     qInstallMessageHandler(msg_hnd); // install the log message handler
     logFile.open(QIODevice::WriteOnly | QIODevice::Append); // open the log file
 
-    // print version infomation
+    // print version information
     logger.info(QString("// %1 %2 //").arg(qAppName(), qApp->applicationVersion())
                     .toUtf8().constData());
     logger.info(QString("// based on Qt version %1 //").arg(QT_VERSION_STR)
