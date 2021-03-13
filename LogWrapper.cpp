@@ -5,7 +5,7 @@
 #include <QTextStream>
 
 QtMsgType log_level; // log level setting
-QFile* logFile; // a pointer to the log file
+QFile logFile; // a pointer to the log file
 const char* logFormat = "[%1][%2][%3:%4 %5]%6\n";
 const char* timeFormat = "yyyy-MM-dd hh:mm:ss.zzz t";
 
@@ -42,14 +42,9 @@ void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
     }
 
     // write the formmated log string to file
-    // DO NOT USE QFile::wirte, because it only writes on program exit
-    QTextStream(logFile) << QString(logFormat)
-                       .arg(time)
-                       .arg(level)
-                       .arg(ctx.file)
-                       .arg(ctx.line)
-                       .arg(ctx.function)
-                       .arg(msg);
+    logFile.write(QString(logFormat).arg(time, level, QString(ctx.file)
+                 , QString::number(ctx.line), QString(ctx.function), msg)
+                 .toUtf8());
 }
 
 namespace isMonthly {
@@ -57,9 +52,9 @@ namespace isMonthly {
 void log_wrapper_init(const char* path, QtMsgType level)
 {
     log_level = level; // set the log level
-    logFile = new QFile(path);
+    logFile.setFileName(path);
     qInstallMessageHandler(msg_hnd); // install the log message handler
-    logFile->open(QIODevice::WriteOnly | QIODevice::Append); // open the log file
+    logFile.open(QIODevice::WriteOnly | QIODevice::Append); // open the log file
 
     // print version infomation
     logger.info(QString("// %1 %2 //").arg(qAppName(), qApp->applicationVersion())
@@ -73,11 +68,9 @@ void log_wrapper_init(const char* path, QtMsgType level)
 void log_wrapper_destroy()
 {
     // close the log file if it is open
-    if (logFile->isOpen()) {
-        logFile->close();
+    if (logFile.isOpen()) {
+        logFile.close();
     }
-    if (logFile) delete logFile; // release the memory
-    logFile = nullptr;
 }
 
 } // namespace isMonthly
