@@ -21,13 +21,13 @@ public:
     void setUrl(const QString& url); // set query url
     void setSerialCode(const QString& serialCode); // set serial code
     void query() const; // start query
-    const QString getQuota(const QString& response) const; // return result
+    QString getQuota(const QString& response) const; // return result
 
 signals:
     void queryFinished(QNetworkReply* reply);
 
 protected:
-    const QString parseQuota(const QString& content) const; // parse result
+    QString parseQuota(const QString& content) const; // parse result
 
 private:
     QNetworkAccessManager* quotaManager; // to manage network access
@@ -36,7 +36,7 @@ private:
 
 };
 
-inline const QString QuotaController::getQuota(const QString &response) const {
+inline QString QuotaController::getQuota(const QString &response) const {
     return parseQuota(response);
 }
 

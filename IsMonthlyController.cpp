@@ -35,7 +35,7 @@ void IsMonthlyController::query(const QString& cid) const
     isMonthlyManager->get(request);
 }
 
-const IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
+IsMonthlyResponse IsMonthlyController::getResponse(QNetworkReply* reply)
 {
     const QByteArray& responseBytes = reply->readAll();
     logger.debug() << "isMonthly response: " << responseBytes;

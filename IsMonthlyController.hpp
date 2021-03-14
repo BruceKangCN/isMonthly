@@ -29,7 +29,7 @@ public:
 
     void setUrl(const QString& url); // set query url
     void query(const QString& cid) const; // start the query
-    const IsMonthlyResponse getResponse(QNetworkReply* reply); // return result
+    IsMonthlyResponse getResponse(QNetworkReply* reply); // return result
 
 signals:
     void queryFinished(QNetworkReply* reply);
