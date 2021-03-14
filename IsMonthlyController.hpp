@@ -24,8 +24,8 @@ class IsMonthlyController : public QObject
 {
     Q_OBJECT
 public:
-    explicit IsMonthlyController(QObject *parent = nullptr);
-    ~IsMonthlyController();
+    explicit IsMonthlyController(QObject *parent = nullptr) noexcept;
+    ~IsMonthlyController() noexcept;
 
     void setUrl(const QString& url); // set query url
     void query(const QString& cid) const; // start the query

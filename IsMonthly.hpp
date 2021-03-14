@@ -27,8 +27,8 @@ class IsMonthly : public QWidget
     Q_OBJECT
 
 public:
-    IsMonthly(QWidget *parent = nullptr);
-    ~IsMonthly();
+    IsMonthly(QWidget *parent = nullptr) noexcept;
+    ~IsMonthly() noexcept;
 
     void keyPressEvent(QKeyEvent* ev);
     void generateFile(const QString& type) const;

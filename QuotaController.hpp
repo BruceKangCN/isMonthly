@@ -15,8 +15,8 @@ class QuotaController : public QObject
 {
     Q_OBJECT
 public:
-    explicit QuotaController(QObject *parent = nullptr);
-    ~QuotaController();
+    explicit QuotaController(QObject *parent = nullptr) noexcept;
+    ~QuotaController() noexcept;
 
     void setUrl(const QString& url); // set query url
     void setSerialCode(const QString& serialCode); // set serial code

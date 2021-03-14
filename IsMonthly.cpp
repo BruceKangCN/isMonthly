@@ -6,7 +6,7 @@
 
 namespace isMonthly {
 
-IsMonthly::IsMonthly(QWidget *parent)
+IsMonthly::IsMonthly(QWidget *parent) noexcept
     : QWidget(parent)
     , ui(new Ui::Widget)
     , config(new QSettings("app.ini", QSettings::IniFormat, this))
@@ -104,7 +104,7 @@ IsMonthly::IsMonthly(QWidget *parent)
     logger.debug() << "support SSL: " << QSslSocket::supportsSsl();
 }
 
-IsMonthly::~IsMonthly()
+IsMonthly::~IsMonthly() noexcept
 {
     log_wrapper_destroy();
     delete ui;
@@ -210,13 +210,13 @@ void IsMonthly::keyPressEvent(QKeyEvent* ev)
  */
 void IsMonthly::on_btnApply_clicked()
 {
-    const QString isMonthlyUrl = ui->inpUrl->text();
+    const QString& isMonthlyUrl = ui->inpUrl->text();
     isMonthlyController.setUrl(isMonthlyUrl);
 
-    const QString quotaUrl = ui->inpQuotaUrl->text();
+    const QString& quotaUrl = ui->inpQuotaUrl->text();
     quotaController.setUrl(quotaUrl);
 
-    const QString serialCode = ui->inpSN->text();
+    const QString& serialCode = ui->inpSN->text();
     quotaController.setSerialCode(serialCode);
 
     const int language = ui->boxLanguage->currentIndex();
@@ -310,7 +310,7 @@ bool IsMonthly::parseProxy(const QString& url) {
     }
 
     // validate host
-    QString host = proxyUrl.host();
+    const QString& host = proxyUrl.host();
     if (host == "") {
         return false;
     }
@@ -326,11 +326,11 @@ bool IsMonthly::parseProxy(const QString& url) {
     /*
      * check if username and password is required
      */
-    QString userName = proxyUrl.userName();
+    const QString& userName = proxyUrl.userName();
     if (userName != "") {
         proxy.setUser(userName);
     }
-    QString password = proxyUrl.password();
+    const QString& password = proxyUrl.password();
     if (password != "") {
         proxyUrl.setPassword(password);
     }
@@ -352,7 +352,7 @@ void IsMonthly::on_btnQuota_clicked()
 inline void IsMonthly::setQuota(QNetworkReply* reply)
 {
     // get the response content, then the quota can be parsed with getQuota
-    QString response = QString::fromUtf8(reply->readAll());
+    const QString& response = QString::fromUtf8(reply->readAll());
     logger.debug() << "quota response: " << response;
     /*
      * let the QuotaController parse the response content

@@ -6,7 +6,7 @@
 
 namespace isMonthly {
 
-IsMonthlyController::IsMonthlyController(QObject *parent)
+IsMonthlyController::IsMonthlyController(QObject *parent) noexcept
     : QObject(parent)
     , replyId(0)
     , isMonthlyUrl("https://v2.mahuateng.cf/isMonthly/")
@@ -17,7 +17,7 @@ IsMonthlyController::IsMonthlyController(QObject *parent)
         this, &IsMonthlyController::queryFinished);
 }
 
-IsMonthlyController::~IsMonthlyController()
+IsMonthlyController::~IsMonthlyController() noexcept
 {
 
 }

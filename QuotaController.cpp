@@ -5,7 +5,7 @@
 
 namespace isMonthly {
 
-QuotaController::QuotaController(QObject *parent)
+QuotaController::QuotaController(QObject *parent) noexcept
     : QObject(parent)
     , quotaManager(new QNetworkAccessManager(this))
     , quotaUrl("https://v2.mahuateng.cf/check_quota?serial_code=")
@@ -15,7 +15,7 @@ QuotaController::QuotaController(QObject *parent)
         this, &QuotaController::queryFinished);
 }
 
-QuotaController::~QuotaController()
+QuotaController::~QuotaController() noexcept
 {
 
 }
