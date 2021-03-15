@@ -1,6 +1,7 @@
 #include "IsMonthly.hpp"
 #include "ui_widget.h"
 
+#include <QDir>
 #include <QClipboard>
 #include <QMessageBox>
 
@@ -9,10 +10,18 @@ namespace isMonthly {
 IsMonthly::IsMonthly(QWidget *parent) noexcept
     : QWidget(parent)
     , ui(new Ui::Widget)
-    , config(new QSettings("app.ini", QSettings::IniFormat, this))
     , isMonthlyModel(new QStandardItemModel(0, 4, this))
     , logLevel(QtInfoMsg)
 {
+#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
+    QDir::setCurrent("/etc/isMonthly");
+    config = new QSettings("app.conf", QSettings::IniFormat, this);
+#elif defined(Q_OS_WIN)
+    config = new QSettings("app.ini", QSettings::IniFormat, this);
+#else
+    config = new QSettings("app.conf", QSettings::IniFormat, this);
+#endif
+
     ui->setupUi(this);
     this->setWindowTitle("is monthly");
     ui->tabWidget->setCurrentIndex(0);

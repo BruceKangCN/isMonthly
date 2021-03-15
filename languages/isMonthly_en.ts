@@ -184,32 +184,32 @@
 <context>
     <name>isMonthly::IsMonthly</name>
     <message>
-        <location filename="../IsMonthly.cpp" line="20"/>
+        <location filename="../IsMonthly.cpp" line="29"/>
         <source>结果</source>
         <translation>result</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="20"/>
+        <location filename="../IsMonthly.cpp" line="29"/>
         <source>码率</source>
         <translation>bitrate</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="151"/>
+        <location filename="../IsMonthly.cpp" line="160"/>
         <source>月额：是</source>
         <translation>monthly: true</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="153"/>
+        <location filename="../IsMonthly.cpp" line="162"/>
         <source>月额：否</source>
         <translation>monthly: false</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="157"/>
+        <location filename="../IsMonthly.cpp" line="166"/>
         <source>查询失败</source>
         <translation>query failed</translation>
     </message>
     <message>
-        <location filename="../IsMonthly.cpp" line="281"/>
+        <location filename="../IsMonthly.cpp" line="290"/>
         <source>解析出错</source>
         <translation>failed to parse</translation>
     </message>
