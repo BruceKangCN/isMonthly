@@ -43,9 +43,11 @@ void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
     }
 
     // write the formmated log string to file
+    logFile.open(QIODevice::WriteOnly | QIODevice::Append);
     logFile.write(QString(logFormat).arg(time, level, QString(ctx.file)
                  , QString::number(ctx.line), QString(ctx.function), msg)
                  .toUtf8());
+    logFile.close();
 }
 
 namespace isMonthly {
@@ -67,6 +69,8 @@ void log_wrapper_init(const char* path, QtMsgType level)
                     .toUtf8().constData());
     logger.debug(QString("// running with Qt version %1 //").arg(qVersion())
                     .toUtf8().constData());
+
+    logFile.close();
 }
 
 void log_wrapper_destroy()
