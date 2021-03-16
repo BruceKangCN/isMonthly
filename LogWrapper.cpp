@@ -47,7 +47,7 @@ void msg_hnd(QtMsgType type, const QMessageLogContext& ctx, const QString& msg)
     logFile.write(QString(logFormat).arg(time, level, QString(ctx.file)
                  , QString::number(ctx.line), QString(ctx.function), msg)
                  .toUtf8());
-    logFile.close();
+    logFile.close(); // don't forget to close after writing
 }
 
 namespace isMonthly {
